@@ -6,11 +6,11 @@ import org.springframework.data.domain.Pageable;
 
 public interface CpuService {
 
-    Page<CentralProcessor> findCpuByProperties(String name, String chipset, String manufacturer, String socket, Integer cores, Pageable pageable);
+    Object findCpuByProperties(String name, String chipset, String manufacturer, String socket, Integer cores, Pageable pageable);
 
-    CentralProcessor findById(String id, Integer userId);
+    Object findById(String id, Integer userId);
 
-    Page<CentralProcessor> recommendList(String id, Integer userId);
+    Object recommendList(String id, Integer userId);
 
-    Page<CentralProcessor> recommendCpuForUser(Integer userId);
+    Object recommendCpuForUser(Integer userId);
 }

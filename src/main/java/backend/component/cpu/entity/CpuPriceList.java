@@ -55,8 +55,8 @@ public class CpuPriceList {
         this.price = price;
     }
 
-    public String getCentralProcessor() {
-        return centralProcessor.getId();
+    public CentralProcessor getCentralProcessor() {
+        return centralProcessor;
     }
 
     public void setCentralProcessor(CentralProcessor centralProcessor) {

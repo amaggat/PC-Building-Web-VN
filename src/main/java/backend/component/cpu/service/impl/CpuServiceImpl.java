@@ -1,6 +1,7 @@
 package backend.component.cpu.service.impl;
 
 import backend.component.cpu.controller.CpuController;
+import backend.component.cpu.dto.response.CentralProcessorResponse;
 import backend.component.cpu.entity.CentralProcessor;
 import backend.component.cpu.repo.CpuRepository;
 import backend.component.cpu.service.CpuService;
@@ -46,8 +47,10 @@ public class CpuServiceImpl implements CpuService {
     private CpuRepository cpuRepository;
 
     @Override
-    public Page<CentralProcessor> findCpuByProperties(String name, String chipset, String manufacturer, String socket, Integer cores, Pageable pageable) {
-        Page<CentralProcessor> cpu = cpuRepository.findAll((Specification<CentralProcessor>) (root, cq, cb) -> {
+    public Object findCpuByProperties(String name, String chipset, String manufacturer, String socket, Integer cores, Pageable pageable) {
+        List<CentralProcessorResponse> responseList = new ArrayList<>();
+
+        Page<CentralProcessor> cpuPages = cpuRepository.findAll((Specification<CentralProcessor>) (root, cq, cb) -> {
             Predicate p = cb.conjunction();
             if (Objects.nonNull(chipset)) {
                 p = cb.and(p, cb.like(root.get("chipset"), "%" + chipset + "%"));
@@ -67,11 +70,17 @@ public class CpuServiceImpl implements CpuService {
             cq.orderBy(cb.desc(root.get("fullname")), cb.asc(root.get("id")));
             return p;
         }, pageable);
-        return cpu;
+
+        for (CentralProcessor cpu : cpuPages) {
+            responseList.add(new CentralProcessorResponse(cpu));
+        }
+
+        Page<CentralProcessorResponse> responsePage = new PageImpl<>(responseList, pageable, cpuPages.getTotalElements());
+        return responsePage;
     }
 
     @Override
-    public Page<CentralProcessor> recommendCpuForUser(Integer userId) {
+    public Object recommendCpuForUser(Integer userId) {
         List<CentralProcessor> centralProcessors = new ArrayList<>();
         try {
             Result result = Utility.returnReccomendedItem(null, "cpu", userId);
@@ -85,7 +94,7 @@ public class CpuServiceImpl implements CpuService {
     }
 
     @Override
-    public CentralProcessor findById(String id, Integer userId) {
+    public Object findById(String id, Integer userId) {
         CentralProcessor cpu = cpuRepository.findByID(id);
         try {
             User user = userRepository.findByID(userId);
@@ -105,7 +114,7 @@ public class CpuServiceImpl implements CpuService {
     }
 
     @Override
-    public Page<CentralProcessor> recommendList(String id, Integer userId) {
+    public Object recommendList(String id, Integer userId) {
         CentralProcessor cpu = cpuRepository.findByID(id);
         List<CentralProcessor> centralProcessors = new ArrayList<>();
         System.out.println("User: " + userId);
