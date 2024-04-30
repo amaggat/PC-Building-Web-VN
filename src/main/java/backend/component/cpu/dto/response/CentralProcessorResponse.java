@@ -33,7 +33,7 @@ public class CentralProcessorResponse extends ElectronicComponentsResponse {
 
     private List<CpuPriceListResponse> priceList = new ArrayList<>();
 
-    private List<PcProfile> pcProfileList = new ArrayList<>();
+    private List<String> pcProfileList = new ArrayList<>();
 
     private List<CpuRating> ratingList = new ArrayList<>();
 
@@ -45,10 +45,14 @@ public class CentralProcessorResponse extends ElectronicComponentsResponse {
         this.minPrice = centralProcessor.getMinPrice();
         this.numberOfRating = centralProcessor.getNumberOfRating();
         this.averageRating = centralProcessor.getAverageRating();
+
         for (CpuPriceList cpuPriceList : centralProcessor.getPriceList()) {
             this.priceList.add(new CpuPriceListResponse(cpuPriceList));
         }
-        this.pcProfileList = new ArrayList<>();
+        for (PcProfile pcProfile : centralProcessor.getPcProfileList()) {
+            this.pcProfileList.add(pcProfile.getId());
+        }
+
         this.ratingList = new ArrayList<>();
     }
 }

@@ -95,8 +95,8 @@ public class CentralProcessor extends ElectronicComponents {
         this.PriceList = cpuPriceList;
     }
 
-    public List<String> getPcProfileList() {
-        return Utility.returnPcProfileID(this.pcProfileList);
+    public List<PcProfile> getPcProfileList() {
+        return this.pcProfileList;
     }
 
     public void setPcProfileList(List<PcProfile> pcProfileList) {
