@@ -114,7 +114,7 @@ public class CpuServiceImpl implements CpuService {
     }
 
     @Override
-    public Object recommendList(String id, Integer userId) {
+    public Object getRecommendCpuForUserWithCpuId(String id, Integer userId) {
         CentralProcessor cpu = cpuRepository.findByID(id);
         List<CentralProcessor> centralProcessors = new ArrayList<>();
         System.out.println("User: " + userId);

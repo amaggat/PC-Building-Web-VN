@@ -1,6 +1,5 @@
 package backend.component.cpu.controller;
 
-
 import backend.component.cpu.service.CpuService;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -42,7 +41,7 @@ public class CpuController {
     }
 
     @GetMapping("/api/recommend/cpu")
-    public ResponseEntity<Object> recommendFront(@CookieValue(value = "userId", required = false) Integer userId) {
+    public ResponseEntity<Object> getRecommendCpuForUser(@CookieValue(value = "userId", required = false) Integer userId) {
         logger.info("##### REQUEST RECEIVED (CPU - Recommend) #####");
 
         try {
@@ -60,7 +59,7 @@ public class CpuController {
     }
 
     @GetMapping("/api/cpu/{CpuID}")
-    public ResponseEntity<Object> searchById(@PathVariable("CpuID") String id, @CookieValue(value = "userId", required = false) Integer userId) {
+    public ResponseEntity<Object> findById(@PathVariable("CpuID") String id, @CookieValue(value = "userId", required = false) Integer userId) {
         logger.info("##### REQUEST RECEIVED (CPU - Find By ID) #####");
         try {
             logger.info("Request Data: {userID:" + userId + ", cpu_id:" + id + "}");
@@ -76,11 +75,11 @@ public class CpuController {
     }
 
     @GetMapping("/api/recommend/cpu/{id}")
-    public ResponseEntity<Object> recommendList(@PathVariable("id") String id, @CookieValue(value = "userId", required = false) Integer userId) {
+    public ResponseEntity<Object> getRecommendCpuForUserWithCpuId(@PathVariable("id") String id, @CookieValue(value = "userId", required = false) Integer userId) {
         logger.info("##### REQUEST RECEIVED (CPU - Recommend by ID) #####");
         try {
             logger.info("Request Data: {userID:" + userId + ", cpu_id:" + id + "}");
-            Object response = cpuService.recommendList(id, userId);
+            Object response = cpuService.getRecommendCpuForUserWithCpuId(id, userId);
             return new ResponseEntity<>(response, HttpStatus.OK);
         } catch (Exception e) {
             logger.error("Exception: " + e.getMessage(), e);

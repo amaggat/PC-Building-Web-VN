@@ -1,7 +1,5 @@
 package backend.component.cpu.service;
 
-import backend.component.cpu.entity.CentralProcessor;
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
 public interface CpuService {
@@ -10,7 +8,7 @@ public interface CpuService {
 
     Object findById(String id, Integer userId);
 
-    Object recommendList(String id, Integer userId);
+    Object getRecommendCpuForUserWithCpuId(String id, Integer userId);
 
     Object recommendCpuForUser(Integer userId);
 }
