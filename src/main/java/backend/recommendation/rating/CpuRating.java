@@ -1,6 +1,6 @@
 package backend.recommendation.rating;
 
-import backend.pc.cpu.CentralProcessor;
+import backend.component.cpu.entity.CentralProcessor;
 import backend.recommendation.score.Rating;
 
 import javax.persistence.Entity;

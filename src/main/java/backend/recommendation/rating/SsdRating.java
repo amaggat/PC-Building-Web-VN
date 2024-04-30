@@ -1,6 +1,6 @@
 package backend.recommendation.rating;
 
-import backend.pc.drives.SolidStateDrive.SolidStateDrive;
+import backend.component.drives.SolidStateDrive.SolidStateDrive;
 import backend.recommendation.score.Rating;
 
 import javax.persistence.Entity;

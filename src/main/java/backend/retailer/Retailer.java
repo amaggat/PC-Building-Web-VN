@@ -1,13 +1,13 @@
 package backend.retailer;
 
-import backend.model.NameEntity;
-import backend.pc.cpu.CpuPriceList;
-import backend.pc.drives.HardDiskDrive.HddPriceList;
-import backend.pc.drives.SolidStateDrive.SsdPriceList;
-import backend.pc.gpu.GpuPriceList;
-import backend.pc.mainboard.MainPriceList;
-import backend.pc.psu.PsuPriceList;
-import backend.pc.ram.RamPriceList;
+import backend.common.NameEntity;
+import backend.component.cpu.entity.CpuPriceList;
+import backend.component.drives.HardDiskDrive.HddPriceList;
+import backend.component.drives.SolidStateDrive.SsdPriceList;
+import backend.component.gpu.GpuPriceList;
+import backend.component.mainboard.MainPriceList;
+import backend.component.psu.PsuPriceList;
+import backend.component.ram.RamPriceList;
 import backend.recommendation.rating.RetailerRating;
 import backend.utility.Utility;
 

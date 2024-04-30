@@ -1,7 +1,7 @@
 package backend.feedbacks;
 
 import backend.article.Post;
-import backend.model.NameEntity;
+import backend.common.NameEntity;
 import backend.user.User;
 
 import javax.persistence.*;

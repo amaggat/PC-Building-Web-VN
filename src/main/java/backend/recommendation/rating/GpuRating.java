@@ -1,6 +1,6 @@
 package backend.recommendation.rating;
 
-import backend.pc.gpu.GraphicProcessor;
+import backend.component.gpu.GraphicProcessor;
 import backend.recommendation.score.Rating;
 
 import javax.persistence.Entity;

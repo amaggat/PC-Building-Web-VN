@@ -1,12 +1,12 @@
 package backend.chatbot.service;
 
-import backend.pc.cpu.CpuRepository;
-import backend.pc.drives.HardDiskDrive.HddRepository;
-import backend.pc.drives.SolidStateDrive.SsdRepository;
-import backend.pc.gpu.GpuRepository;
-import backend.pc.mainboard.MainRepository;
-import backend.pc.psu.PsuRepository;
-import backend.pc.ram.RamRepository;
+import backend.component.cpu.repo.CpuRepository;
+import backend.component.drives.HardDiskDrive.HddRepository;
+import backend.component.drives.SolidStateDrive.SsdRepository;
+import backend.component.gpu.GpuRepository;
+import backend.component.mainboard.MainRepository;
+import backend.component.psu.PsuRepository;
+import backend.component.ram.RamRepository;
 import backend.utility.Recommender;
 import backend.utility.Result;
 import backend.utility.Utility;

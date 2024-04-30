@@ -2,7 +2,7 @@ package backend.article;
 
 
 import backend.feedbacks.Feedbacks;
-import backend.model.NameEntity;
+import backend.common.NameEntity;
 import backend.pcprofile.PcProfile;
 import backend.user.User;
 import javafx.util.Pair;

@@ -1,6 +1,6 @@
 package backend.utility;
 
-import backend.model.ElectronicComponents;
+import backend.component.model.ElectronicComponents;
 import backend.pcprofile.PcProfile;
 import com.google.gson.Gson;
 

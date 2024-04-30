@@ -1,6 +1,6 @@
 package backend.recommendation.rating;
 
-import backend.pc.psu.PowerSupplyUnit;
+import backend.component.psu.PowerSupplyUnit;
 import backend.recommendation.score.Rating;
 
 import javax.persistence.Entity;

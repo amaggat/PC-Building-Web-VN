@@ -1,6 +1,6 @@
 package backend.recommendation.rating;
 
-import backend.pc.mainboard.Mainboard;
+import backend.component.mainboard.Mainboard;
 import backend.recommendation.score.Rating;
 
 import javax.persistence.Entity;

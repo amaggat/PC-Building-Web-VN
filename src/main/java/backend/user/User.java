@@ -1,7 +1,7 @@
 package backend.user;
 
 import backend.article.Post;
-import backend.model.NameEntity;
+import backend.common.NameEntity;
 import backend.pcprofile.PcProfile;
 import backend.recommendation.rating.*;
 

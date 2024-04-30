@@ -1,6 +1,6 @@
 package backend.recommendation.rating;
 
-import backend.pc.ram.Ram;
+import backend.component.ram.Ram;
 import backend.recommendation.score.Rating;
 
 import javax.persistence.Entity;

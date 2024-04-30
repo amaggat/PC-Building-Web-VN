@@ -1,12 +1,12 @@
 package backend.pcprofile;
 
-import backend.pc.cpu.CentralProcessor;
-import backend.pc.drives.HardDiskDrive.HardDiskDrive;
-import backend.pc.drives.SolidStateDrive.SolidStateDrive;
-import backend.pc.gpu.GraphicProcessor;
-import backend.pc.mainboard.Mainboard;
-import backend.pc.psu.PowerSupplyUnit;
-import backend.pc.ram.Ram;
+import backend.component.cpu.entity.CentralProcessor;
+import backend.component.drives.HardDiskDrive.HardDiskDrive;
+import backend.component.drives.SolidStateDrive.SolidStateDrive;
+import backend.component.gpu.GraphicProcessor;
+import backend.component.mainboard.Mainboard;
+import backend.component.psu.PowerSupplyUnit;
+import backend.component.ram.Ram;
 import backend.recommendation.score.Category;
 import backend.user.User;
 import javafx.util.Pair;
