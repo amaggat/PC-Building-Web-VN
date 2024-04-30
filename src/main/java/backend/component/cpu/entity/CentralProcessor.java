@@ -103,10 +103,6 @@ public class CentralProcessor extends ElectronicComponents {
         this.pcProfileList = pcProfileList;
     }
 
-//    public List<CpuRating> getCpuRatingList() {
-//        return cpuRatingList;
-//    }
-
     public void setCpuRatingList(List<CpuRating> cpuRatingList) {
         this.cpuRatingList = cpuRatingList;
     }

@@ -1,13 +1,10 @@
 package backend.component.cpu.controller;
 
 
-
-import backend.component.cpu.entity.CentralProcessor;
 import backend.component.cpu.service.CpuService;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -63,7 +60,7 @@ public class CpuController {
     }
 
     @GetMapping("/api/cpu/{CpuID}")
-    public ResponseEntity<Object> SearchById(@PathVariable("CpuID") String id, @CookieValue(value = "userId", required = false) Integer userId) {
+    public ResponseEntity<Object> searchById(@PathVariable("CpuID") String id, @CookieValue(value = "userId", required = false) Integer userId) {
         logger.info("##### REQUEST RECEIVED (CPU - Find By ID) #####");
         try {
             logger.info("Request Data: {userID:" + userId + ", cpu_id:" + id + "}");
