@@ -21,6 +21,8 @@ public class Utility {
     public static final String URL_CHATBOT = "http://localhost:5000/chatbot";
     public static final String URL_CHATBOT_VOICE = "http://localhost:5000/chatbot/voice";
 
+    public static final Integer maxInteger = 2147483647;
+
     public static List<String> returnPcProfileID(List<PcProfile> pcProfileList) {
         List<String> profileId = new ArrayList<>();
 

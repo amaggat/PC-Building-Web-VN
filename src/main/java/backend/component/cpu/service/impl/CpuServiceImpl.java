@@ -32,7 +32,7 @@ import java.util.Objects;
 @Service
 public class CpuServiceImpl implements CpuService {
 
-    private static final Logger logger = LogManager.getLogger(CpuController.class);
+    private static final Logger logger = LogManager.getLogger(CpuServiceImpl.class);
 
     @Autowired
     private UserActivityRepository userActivityRepository;
@@ -96,6 +96,7 @@ public class CpuServiceImpl implements CpuService {
     @Override
     public Object findById(String id, Integer userId) {
         CentralProcessor cpu = cpuRepository.findByID(id);
+        CentralProcessorResponse response = new CentralProcessorResponse(cpu);
         try {
             User user = userRepository.findByID(userId);
             if (user != null) {
@@ -104,12 +105,12 @@ public class CpuServiceImpl implements CpuService {
                 cpuRepository.update(id);
             }
             cpu.setCpuRating(cpuRatingRepository.findById(user.getId() + "-" + id));
-            logger.log(ClientLevel.CLIENT, "Success");
-            return cpu;
 
+            logger.log(ClientLevel.CLIENT, "Success");
+            return response;
         } catch (Exception e) {
             logger.log(ClientLevel.CLIENT, "Unsuccess");
-            return cpu;
+            return response;
         }
     }
 

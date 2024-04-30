@@ -23,9 +23,9 @@ public class CentralProcessorResponse extends ElectronicComponentsResponse {
 
     private Integer cores;
 
-    private Integer Threads;
+    private Integer threads;
 
-    private Integer minPrice;
+    private Integer minPrice = -1;
 
     private Integer numberOfRating;
 
@@ -41,14 +41,18 @@ public class CentralProcessorResponse extends ElectronicComponentsResponse {
         super(centralProcessor);
         this.socket = centralProcessor.getSocket();
         this.cores = centralProcessor.getCores();
-        this.Threads = centralProcessor.getThreads();
-        this.minPrice = centralProcessor.getMinPrice();
+        this.threads = centralProcessor.getThreads();
+
         this.numberOfRating = centralProcessor.getNumberOfRating();
         this.averageRating = centralProcessor.getAverageRating();
 
         for (CpuPriceList cpuPriceList : centralProcessor.getPriceList()) {
             this.priceList.add(new CpuPriceListResponse(cpuPriceList));
+            if(cpuPriceList.getPrice() < this.minPrice || this.minPrice.equals(-1)) {
+                this.minPrice = cpuPriceList.getPrice();
+            }
         }
+
         for (PcProfile pcProfile : centralProcessor.getPcProfileList()) {
             this.pcProfileList.add(pcProfile.getId());
         }
