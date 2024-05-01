@@ -29,8 +29,8 @@ public class CpuController {
 
         try {
             logger.info("Request Data: {name:" + name + ", chipset:" + chipset + ", manufacturer:" + manufacturer + ", socket:" + socket + ", cores:" + cores + "}");
-            Object response = cpuService.findByProperties(name, chipset, manufacturer, socket, cores, pageable);
-            return new ResponseEntity<>(response, HttpStatus.OK);
+            ResponseEntity<Object> response = cpuService.findByProperties(name, chipset, manufacturer, socket, cores, pageable);
+            return response;
         } catch (Exception e) {
             logger.error("Exception: " + e.getMessage(), e);
             return new ResponseEntity<>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
@@ -45,8 +45,8 @@ public class CpuController {
         logger.info("##### REQUEST RECEIVED (CPU - Find By ID) #####");
         try {
             logger.info("Request Data: {userID:" + userId + ", cpu_id:" + id + "}");
-            Object response = cpuService.findById(id, userId);
-            return new ResponseEntity<>(response, HttpStatus.OK);
+            ResponseEntity<Object> response = cpuService.findById(id, userId);
+            return response;
         } catch (Exception e) {
             logger.error("Exception: " + e.getMessage(), e);
             return new ResponseEntity<>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
@@ -63,8 +63,8 @@ public class CpuController {
 
         try {
             logger.info("Request Data: {userID:" + userId + "}");
-            Object response = cpuService.getRecommendItemForUser(userId);
-            return new ResponseEntity<>(response, HttpStatus.OK);
+            ResponseEntity<Object> response = cpuService.getRecommendItemForUser(userId);
+            return response;
         } catch (Exception e) {
             logger.error("Exception: " + e.getMessage(), e);
             return new ResponseEntity<>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
@@ -79,8 +79,8 @@ public class CpuController {
         logger.info("##### REQUEST RECEIVED (CPU - Recommend by ID) #####");
         try {
             logger.info("Request Data: {userID:" + userId + ", cpu_id:" + id + "}");
-            Object response = cpuService.getRecommendItemForUserWithItemId(id, userId);
-            return new ResponseEntity<>(response, HttpStatus.OK);
+            ResponseEntity<Object> response = cpuService.getRecommendItemForUserWithItemId(id, userId);
+            return response;
         } catch (Exception e) {
             logger.error("Exception: " + e.getMessage(), e);
             return new ResponseEntity<>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);

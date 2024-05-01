@@ -1,15 +1,12 @@
-package backend.component.drives.hdd;
+package backend.component.drives.hdd.entity;
 
 import backend.component.common.model.ElectronicComponents;
-import backend.pcprofile.PcProfile;
 import backend.recommendation.rating.HddRating;
-import backend.utility.Utility;
 import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotEmpty;
-import java.util.List;
 import java.util.Optional;
 
 @Entity

@@ -1,4 +1,4 @@
-package backend.component.drives.sdd;
+package backend.component.drives.sdd.entity;
 
 
 import backend.component.common.model.ElectronicComponents;
@@ -29,7 +29,7 @@ public class SolidStateDrive extends ElectronicComponents {
     private List<PcProfile> pcProfile;
 
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "ssd", fetch = FetchType.EAGER)
-    private List<SsdPriceList> PriceList;
+    private List<SsdComponentPrice> PriceList;
 
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "ssd", fetch = FetchType.LAZY)
     private List<SsdRating> ssdRatingList;

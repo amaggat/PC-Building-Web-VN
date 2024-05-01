@@ -1,9 +1,17 @@
 package backend.user;
 
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
 import javax.persistence.*;
+import java.sql.Timestamp;
 
 @Entity
 @Table(name = "user_activity")
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
 public class UserActivity {
 
     @Id
@@ -19,47 +27,15 @@ public class UserActivity {
     @Column(name = "componentid")
     private String componentId;
 
+    @Column(name = "requestAt")
+    private Timestamp requestDate;
+
     public UserActivity(User user, String action, String componentId) {
         this.id = user.getId() + "-" + componentId + "-" + action;
         this.user = user;
         this.action = action;
         this.componentId = componentId;
-    }
-
-    public UserActivity() {
-
-    }
-
-    public String getId() {
-        return id;
-    }
-
-    public void setId(String id) {
-        this.id = id;
-    }
-
-    public User getUser() {
-        return user;
-    }
-
-    public void setUser(User user) {
-        this.user = user;
-    }
-
-    public String getAction() {
-        return action;
-    }
-
-    public void setAction(String action) {
-        this.action = action;
-    }
-
-    public String getComponentId() {
-        return componentId;
-    }
-
-    public void setComponentId(String componentId) {
-        this.componentId = componentId;
+        this.requestDate = new Timestamp(System.currentTimeMillis());
     }
 
 }

@@ -1,8 +1,8 @@
 package backend.chatbot.service;
 
 import backend.component.cpu.repo.CpuRepository;
-import backend.component.drives.hdd.HddRepository;
-import backend.component.drives.sdd.SsdRepository;
+import backend.component.drives.hdd.repo.HddRepository;
+import backend.component.drives.sdd.repo.SsdRepository;
 import backend.component.gpu.repo.GpuRepository;
 import backend.component.mainboard.repo.MainboardRepository;
 import backend.component.psu.repo.PsuRepository;

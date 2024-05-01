@@ -2,12 +2,12 @@ package backend.retailer;
 
 import backend.common.NameEntity;
 import backend.component.cpu.entity.CpuComponentPrice;
-import backend.component.drives.hdd.HddPriceList;
-import backend.component.drives.sdd.SsdPriceList;
+import backend.component.drives.hdd.entity.HddComponentPrice;
+import backend.component.drives.sdd.entity.SsdComponentPrice;
 import backend.component.gpu.entity.GpuComponentPrice;
 import backend.component.mainboard.entity.MainboardComponentPrice;
 import backend.component.psu.entity.PsuComponentPrice;
-import backend.component.ram.RamPriceList;
+import backend.component.ram.RamComponentPrice;
 import backend.recommendation.rating.RetailerRating;
 import backend.utility.Utility;
 
@@ -50,16 +50,16 @@ public class Retailer extends NameEntity {
     private List<MainboardComponentPrice> mainboardList;
 
     @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, mappedBy = "retailer")
-    private List<SsdPriceList> ssdList;
+    private List<SsdComponentPrice> ssdList;
 
     @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, mappedBy = "retailer")
-    private List<HddPriceList> hddList;
+    private List<HddComponentPrice> hddList;
 
     @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, mappedBy = "retailer")
     private List<PsuComponentPrice> psuList;
 
     @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, mappedBy = "retailer")
-    private List<RamPriceList> ramList;
+    private List<RamComponentPrice> ramList;
 
     public String getFacebook() {
         return facebook;

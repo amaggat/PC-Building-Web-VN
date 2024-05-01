@@ -1,5 +1,7 @@
-package backend.component.drives.sdd;
+package backend.component.drives.sdd.controller;
 
+import backend.component.drives.sdd.entity.SolidStateDrive;
+import backend.component.drives.sdd.repo.SsdRepository;
 import backend.recommendation.repository.SsdRatingRepository;
 import backend.security.utils.JwtUtils;
 import backend.user.User;

@@ -1,8 +1,8 @@
 package backend.pcprofile;
 
 import backend.component.cpu.entity.CentralProcessor;
-import backend.component.drives.hdd.HardDiskDrive;
-import backend.component.drives.sdd.SolidStateDrive;
+import backend.component.drives.hdd.entity.HardDiskDrive;
+import backend.component.drives.sdd.entity.SolidStateDrive;
 import backend.component.gpu.entity.GraphicProcessor;
 import backend.component.mainboard.entity.Mainboard;
 import backend.component.psu.entity.PowerSupplyUnit;

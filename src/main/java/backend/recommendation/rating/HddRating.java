@@ -1,6 +1,6 @@
 package backend.recommendation.rating;
 
-import backend.component.drives.hdd.HardDiskDrive;
+import backend.component.drives.hdd.entity.HardDiskDrive;
 import backend.recommendation.score.Rating;
 
 import javax.persistence.Entity;

@@ -1,6 +1,8 @@
-package backend.component.drives.hdd;
+package backend.component.drives.hdd.controller;
 
 
+import backend.component.drives.hdd.repo.HddRepository;
+import backend.component.drives.hdd.entity.HardDiskDrive;
 import backend.recommendation.repository.HddRatingRepository;
 import backend.security.utils.JwtUtils;
 import backend.user.User;

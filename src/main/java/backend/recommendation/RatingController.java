@@ -98,7 +98,7 @@ public class RatingController {
     @PostMapping("/user/rating/psu")
     public ResponseEntity<?> rating(@RequestBody PsuRating psuRating, @CookieValue(value = "userId") Integer userid) {
         psuRatingRepository.save(psuRating);
-        updateLog(userid, psuRating.getPsu(), psuRating.getRating());
+        updateLog(userid, psuRating.getPsu().getId(), psuRating.getRating());
         return ResponseEntity.ok(new AuthenticationResponse("Rated", userid.toString()));
     }
 

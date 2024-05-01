@@ -28,7 +28,7 @@ public class Ram extends ElectronicComponents {
     private String sizeOfRam = new String();
 
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "ram", fetch = FetchType.EAGER)
-    private List<RamPriceList> PriceList;
+    private List<RamComponentPrice> PriceList;
 
     @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, mappedBy = "ram")
     private List<RamRating> ramRatingList;
@@ -60,12 +60,12 @@ public class Ram extends ElectronicComponents {
         this.sizeOfRam = sizeOfRam;
     }
 
-    public List<RamPriceList> getPriceList() {
+    public List<RamComponentPrice> getPriceList() {
         return PriceList;
     }
 
-    public void setPriceList(List<RamPriceList> ramPriceList) {
-        this.PriceList = ramPriceList;
+    public void setPriceList(List<RamComponentPrice> ramComponentPrice) {
+        this.PriceList = ramComponentPrice;
     }
 
     public List<String> getPcProfileList() {

@@ -1,5 +1,6 @@
 package backend.component.gpu.service.impl;
 
+import backend.component.cpu.dto.response.CpuResponse;
 import backend.component.gpu.dto.response.GpuResponse;
 import backend.component.gpu.entity.GraphicProcessor;
 import backend.component.gpu.repo.GpuRepository;
@@ -21,6 +22,8 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
@@ -51,8 +54,10 @@ public class GpuServiceImpl implements GpuService {
     private GpuRatingRepository gpuRatingRepository;
 
     @Override
-    public Object findByProperties(String name, String chipset, String manufacturer, Integer VRam, Pageable pageable) {
+    public ResponseEntity<Object> findByProperties(String name, String chipset, String manufacturer, Integer VRam, Pageable pageable) {
         List<GpuResponse> responseList = new ArrayList<>();
+
+        logger.info("Start find GPU with param");
         Page<GraphicProcessor> gpuPage = gpuRepository.findAll((Specification<GraphicProcessor>) (root, cq, cb) -> {
             Predicate p = cb.conjunction();
             if (Objects.nonNull(chipset)) {
@@ -70,74 +75,88 @@ public class GpuServiceImpl implements GpuService {
             cq.orderBy(cb.desc(root.get("fullname")), cb.asc(root.get("id")));
             return p;
         }, pageable);
+        logger.info("Finish find GPU with param, size [" + gpuPage.getTotalElements() + "]");
 
+        logger.info("Create DTO response");
         for(GraphicProcessor gpu : gpuPage) {
             responseList.add(new GpuResponse(gpu));
         }
 
         Page<GpuResponse> responsePage = new PageImpl<>(responseList, pageable, gpuPage.getTotalElements());
-        return responsePage;
+        return new ResponseEntity<>(responsePage, HttpStatus.OK);
     }
 
     @Override
-    public Object findById(String id, Integer userId) {
+    public ResponseEntity<Object> findById(String id, Integer userId) {
+        logger.info("Start find GPU by ID [" + id + "]");
         GraphicProcessor gpu = gpuRepository.findByID(id);
+        if(gpu == null) {
+            logger.info("GPU by ID [" + id + "] not found");
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
 
+        logger.info("GPU by ID [" + id + "] found");
         try {
             User user = userRepository.findByID(userId);
             if (user != null) {
+                logger.info("Add user [" + user.getId() + "] activities");
                 userActivityRepository.save(new UserActivity(user, "view", gpu.getId()));
                 Utility.sendActivity(Utility.URL, "view", user.getId(), gpu.getId());
                 gpuRepository.update(id);
             }
             gpu.setGpuRating(gpuRatingRepository.findById(user.getId() + "-" + id));
-            return gpu;
 
         } catch (Exception e) {
             logger.error("Exception: " + e.getMessage(), e);
-            return gpu;
         }
+
+        logger.info("Create DTO response");
+        GpuResponse response = new GpuResponse(gpu);
+        return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
     @Override
-    public Object getRecommendItemForUser(Integer userId) {
-        List<GraphicProcessor> graphicProcessors = new ArrayList<>();
+    public ResponseEntity<Object> getRecommendItemForUser(Integer userId) {
+        List<GpuResponse> graphicProcessors = new ArrayList<>();
 
         try {
             Result result = Utility.returnReccomendedItem(null, "gpu", userId);
             graphicProcessors = doRecommender(result);
-            Page<GraphicProcessor> gpuPage = new PageImpl<>(graphicProcessors);
-            return gpuPage;
         } catch (Exception e) {
             logger.error("Exception: " + e.getMessage(), e);
-            Page<GraphicProcessor> gpuPage = new PageImpl<>(graphicProcessors);
-            return gpuPage;
         }
+
+        Page<GpuResponse> gpuPage = new PageImpl<>(graphicProcessors);
+        return new ResponseEntity<>(gpuPage, HttpStatus.OK);
     }
 
     @Override
-    public Object getRecommendItemForUserWithItemId(String id, Integer userId) {
+    public ResponseEntity<Object> getRecommendItemForUserWithItemId(String id, Integer userId) {
         GraphicProcessor gpu = gpuRepository.findByID(id);
-        List<GraphicProcessor> graphicProcessors = new ArrayList<>();
+        List<GpuResponse> graphicProcessors = new ArrayList<>();
+        if(gpu == null) {
+            logger.info("GPU by ID [" + id + "] not found");
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
 
         try {
             Result result = Utility.returnReccomendedItem(gpu.getId(), "gpu", userId);
             graphicProcessors = doRecommender(result);
-            Page<GraphicProcessor> gpuPage = new PageImpl<>(graphicProcessors);
-            return gpuPage;
         } catch (Exception e) {
             logger.error("Exception: " + e.getMessage(), e);
-            Page<GraphicProcessor> gpuPage = new PageImpl<>(graphicProcessors);
-            return gpuPage;
         }
+
+        logger.info("Create DTO response");
+        Page<GpuResponse> gpuPage = new PageImpl<>(graphicProcessors);
+        return new ResponseEntity<>(gpuPage, HttpStatus.OK);
     }
 
-    public List<GraphicProcessor> doRecommender(Result result) {
-        List<GraphicProcessor> recommendList = new ArrayList<>();
+    public List<GpuResponse> doRecommender(Result result) {
+        List<GpuResponse> recommendList = new ArrayList<>();
         for (int i = 0; i <10; ++i) {
             Recommender recommender = result.getResult().get(i);
             logger.info(recommender.getItem() + " " + recommender.getScore());
-            recommendList.add(gpuRepository.findByID(recommender.getItem()));
+            recommendList.add(new GpuResponse(gpuRepository.findByID(recommender.getItem())));
         }
         return recommendList;
     }

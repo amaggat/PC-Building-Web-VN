@@ -31,8 +31,8 @@ public class GpuController {
 
         try {
             logger.info("Request Data: {name:" + name + ", chipset:" + chipset + ", manufacturer:" + manufacturer + ", VRam:" + VRam + "}");
-            Object response = gpuService.findByProperties(name, chipset, manufacturer, VRam, pageable);
-            return new ResponseEntity<>(response, HttpStatus.OK);
+            ResponseEntity<Object> response = gpuService.findByProperties(name, chipset, manufacturer, VRam, pageable);
+            return response;
         } catch (Exception e) {
             logger.error("Exception: " + e.getMessage(), e);
             return new ResponseEntity<>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
@@ -47,8 +47,8 @@ public class GpuController {
         logger.info("##### REQUEST RECEIVED (GPU - Find By ID) #####");
         try {
             logger.info("Request Data: {userID:" + userId + ", cpu_id:" + id + "}");
-            Object response = gpuService.findById(id, userId);
-            return new ResponseEntity<>(response, HttpStatus.OK);
+            ResponseEntity<Object> response = gpuService.findById(id, userId);
+            return response;
         } catch (Exception e) {
             logger.error("Exception: " + e.getMessage(), e);
             return new ResponseEntity<>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
@@ -64,8 +64,8 @@ public class GpuController {
 
         try {
             logger.info("Request Data: {userID:" + userId + "}");
-            Object response = gpuService.getRecommendItemForUser(userId);
-            return new ResponseEntity<>(response, HttpStatus.OK);
+            ResponseEntity<Object> response = gpuService.getRecommendItemForUser(userId);
+            return response;
         } catch (Exception e) {
             logger.error("Exception: " + e.getMessage(), e);
             return new ResponseEntity<>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
@@ -77,17 +77,17 @@ public class GpuController {
 
     @GetMapping("/api/recommend/gpu/{id}")
     public ResponseEntity<Object> getRecommendItemForUserWithItemId(@PathVariable("id") String id, @CookieValue(value = "userId", required = false) Integer userId) {
-        logger.info("##### REQUEST RECEIVED (CPU - Recommend by ID) #####");
+        logger.info("##### REQUEST RECEIVED (CPU - Recommend with Item ID) #####");
         try {
             logger.info("Request Data: {userID:" + userId + ", cpu_id:" + id + "}");
-            Object response = gpuService.getRecommendItemForUserWithItemId(id, userId);
-            return new ResponseEntity<>(response, HttpStatus.OK);
+            ResponseEntity<Object> response = gpuService.getRecommendItemForUserWithItemId(id, userId);
+            return response;
         } catch (Exception e) {
             logger.error("Exception: " + e.getMessage(), e);
             return new ResponseEntity<>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
         } finally {
             logger.info("Response sent");
-            logger.info("##### FINISH REQUEST (CPU - Recommend by ID) #####");
+            logger.info("##### FINISH REQUEST (GPU - Recommend with Item ID) #####");
         }
     }
 

@@ -20,6 +20,8 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
@@ -46,7 +48,7 @@ public class CpuServiceImpl implements CpuService {
     private CpuRepository cpuRepository;
 
     @Override
-    public Object findByProperties(String name, String chipset, String manufacturer, String socket, Integer cores, Pageable pageable) {
+    public ResponseEntity<Object> findByProperties(String name, String chipset, String manufacturer, String socket, Integer cores, Pageable pageable) {
         List<CpuResponse> responseList = new ArrayList<>();
 
         logger.info("Start find CPU with param");
@@ -78,13 +80,18 @@ public class CpuServiceImpl implements CpuService {
         }
 
         Page<CpuResponse> responsePage = new PageImpl<>(responseList, pageable, cpuPages.getTotalElements());
-        return responsePage;
+        return new ResponseEntity<>(responsePage, HttpStatus.OK);
     }
 
     @Override
-    public Object findById(String id, Integer userId) {
+    public ResponseEntity<Object> findById(String id, Integer userId) {
         logger.info("Start find CPU by ID [" + id + "]");
         CentralProcessor cpu = cpuRepository.findByID(id);
+        if(cpu == null) {
+            logger.info("CPU by ID [" + id + "] not found");
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+
         logger.info("CPU by ID [" + id + "] found");
         try {
             User user = userRepository.findByID(userId);
@@ -97,41 +104,41 @@ public class CpuServiceImpl implements CpuService {
         } catch (Exception e) {
             logger.error("Exception: " + e.getMessage(), e);
         }
+
         logger.info("Create DTO response");
         CpuResponse response = new CpuResponse(cpu);
-        return response;
+        return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
     @Override
-    public Object getRecommendItemForUser(Integer userId) {
+    public ResponseEntity<Object> getRecommendItemForUser(Integer userId) {
         List<CpuResponse> centralProcessors = new ArrayList<>();
         try {
+            logger.info("Find recommend item for User ID [" + userId + "]");
             Result result = Utility.returnReccomendedItem(null, "cpu", userId);
             centralProcessors = doRecommender(result);
-            Page<CpuResponse> cpuPage = new PageImpl<>(centralProcessors);
-            return cpuPage;
         } catch (Exception e) {
             logger.error("Exception: " + e.getMessage(), e);
-            Page<CpuResponse> cpuPage = new PageImpl<>(centralProcessors);
-            return cpuPage;
         }
+
+        Page<CpuResponse> response = new PageImpl<>(centralProcessors);
+        return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
     @Override
-    public Object getRecommendItemForUserWithItemId(String id, Integer userId) {
+    public ResponseEntity<Object> getRecommendItemForUserWithItemId(String id, Integer userId) {
         CentralProcessor cpu = cpuRepository.findByID(id);
         List<CpuResponse> centralProcessors = new ArrayList<>();
-        System.out.println("User: " + userId);
         try {
+            logger.info("Find recommend from item [" + id + "] for User ID [" + userId + "]");
             Result result = Utility.returnReccomendedItem(cpu.getId(), "cpu", userId);
             centralProcessors = doRecommender(result);
-            Page<CpuResponse> cpuPage = new PageImpl<>(centralProcessors);
-            return cpuPage;
         } catch (Exception e) {
             logger.error("Exception: " + e.getMessage(), e);
-            Page<CpuResponse> cpuPage = new PageImpl<>(centralProcessors);
-            return cpuPage;
         }
+
+        Page<CpuResponse> response = new PageImpl<>(centralProcessors);
+        return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
     private List<CpuResponse> doRecommender(Result result) {
