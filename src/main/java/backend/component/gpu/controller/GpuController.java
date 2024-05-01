@@ -46,7 +46,7 @@ public class GpuController {
     public ResponseEntity<Object> findById(@PathVariable("id") String id, @CookieValue(value = "userId", required = false) Integer userId) {
         logger.info("##### REQUEST RECEIVED (GPU - Find By ID) #####");
         try {
-            logger.info("Request Data: {userID:" + userId + ", cpu_id:" + id + "}");
+            logger.info("Request Data: {user_id:" + userId + ", item_id:" + id + "}");
             ResponseEntity<Object> response = gpuService.findById(id, userId);
             return response;
         } catch (Exception e) {
@@ -79,7 +79,7 @@ public class GpuController {
     public ResponseEntity<Object> getRecommendItemForUserWithItemId(@PathVariable("id") String id, @CookieValue(value = "userId", required = false) Integer userId) {
         logger.info("##### REQUEST RECEIVED (CPU - Recommend with Item ID) #####");
         try {
-            logger.info("Request Data: {userID:" + userId + ", cpu_id:" + id + "}");
+            logger.info("Request Data: {user_id:" + userId + ", item_id:" + id + "}");
             ResponseEntity<Object> response = gpuService.getRecommendItemForUserWithItemId(id, userId);
             return response;
         } catch (Exception e) {

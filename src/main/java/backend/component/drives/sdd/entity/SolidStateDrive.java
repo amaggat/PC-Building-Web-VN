@@ -29,7 +29,7 @@ public class SolidStateDrive extends ElectronicComponents {
     private List<PcProfile> pcProfile;
 
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "ssd", fetch = FetchType.EAGER)
-    private List<SsdComponentPrice> PriceList;
+    private List<SsdComponentPrice> priceList;
 
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "ssd", fetch = FetchType.LAZY)
     private List<SsdRating> ssdRatingList;

@@ -26,12 +26,12 @@ public class Ram extends ElectronicComponents {
     @NotEmpty
     private Integer clockSpeed;
 
-    @ManyToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, mappedBy = "ram")
-    private List<PcProfile> pcProfileList;
-
     @Column(name = "sizeofram")
     @NotEmpty
     private String sizeOfRam = new String();
+
+    @ManyToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, mappedBy = "ram")
+    private List<PcProfile> pcProfileList;
 
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "ram", fetch = FetchType.EAGER)
     private List<RamComponentPrice> PriceList;

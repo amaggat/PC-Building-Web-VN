@@ -2,6 +2,7 @@ package backend.component.drives.sdd.controller;
 
 import backend.component.drives.sdd.entity.SolidStateDrive;
 import backend.component.drives.sdd.repo.SsdRepository;
+import backend.component.drives.sdd.service.SsdService;
 import backend.recommendation.repository.SsdRatingRepository;
 import backend.security.utils.JwtUtils;
 import backend.user.User;
@@ -19,6 +20,8 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 
@@ -34,103 +37,78 @@ public class SsdController {
 
     @Autowired
     private JwtUtils jwtUtil;
-    private final UserActivityRepository userActivityRepository;
-    private final UserRepository userRepository;
-    private final SsdRepository ssdRepository;
-    private final SsdRatingRepository ssdRatingRepository;
 
-    public SsdController(UserActivityRepository userActivityRepository, UserRepository userRepository, SsdRepository ssdRepository, SsdRatingRepository ssdRatingRepository) {
-        this.userActivityRepository = userActivityRepository;
-        this.userRepository = userRepository;
-        this.ssdRepository = ssdRepository;
-        this.ssdRatingRepository = ssdRatingRepository;
-    }
+    @Autowired
+    private SsdService ssdService;
 
     @GetMapping("/api/ssd")
-    public Page<SolidStateDrive> list(@RequestParam(name = "name", required = false) String name,
+    public ResponseEntity<Object> list(@RequestParam(name = "name", required = false) String name,
                                       @RequestParam(name = "chipset", required = false) String chipset,
                                       @RequestParam(name = "manufacturer", required = false) String manufacturer,
                                       @RequestParam(name = "storage", required = false) String storage,
                                       Pageable pageable) {
-        Page<SolidStateDrive> ssd = ssdRepository.findAll((Specification<SolidStateDrive>) (root, cq, cb) -> {
-            Predicate p = cb.conjunction();
-            if (Objects.nonNull(chipset)) {
-                p = cb.and(p, cb.like(root.get("chipset"), "%" + chipset + "%"));
-            }
-            if (Objects.nonNull(manufacturer)) {
-                p = cb.and(p, cb.like(root.get("manufacturer"), "%" + manufacturer + "%"));
-            }
-            if (Objects.nonNull(storage)) {
-                p = cb.and(p, cb.like(root.get("storage"), "%" + storage + "%"));
-            }
-            if (!StringUtils.isEmpty(name)) {
-                p = cb.and(p, cb.like(root.get("fullname"), "%" + name + "%"));
-            }
-            cq.orderBy(cb.desc(root.get("fullname")), cb.asc(root.get("id")));
-            return p;
-        }, pageable);
-        return ssd;
+        logger.info("##### REQUEST RECEIVED (SSD - Find) #####");
+
+        try {
+            logger.info("Request Data: {name:" + name + ", chipset:" + chipset +
+                    ", manufacturer:" + manufacturer + ", storage:" + storage + "}");
+            ResponseEntity<Object> response = ssdService.findByProperties(name, chipset, manufacturer, storage, pageable);
+            return response;
+        } catch (Exception e) {
+            logger.error("Exception: " + e.getMessage(), e);
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+        } finally {
+            logger.info("Response sent");
+            logger.info("##### FINISH REQUEST (SSD - Find) #####");
+        }
     }
 
     @GetMapping("/api/ssd/{id}")
-    public SolidStateDrive SearchById(@PathVariable("id") String id, @CookieValue(value = "userId", required = false) Integer userId) {
-        SolidStateDrive ssd = ssdRepository.findByID(id);
-
+    public ResponseEntity<Object> findById(@PathVariable("id") String id, @CookieValue(value = "userId", required = false) Integer userId) {
+        logger.info("##### REQUEST RECEIVED (SSD - Find By ID) #####");
         try {
-            User user = userRepository.findByID(userId);
-            if (user != null) {
-                userActivityRepository.save(new UserActivity(user, "view", ssd.getId()));
-                Utility.sendActivity(Utility.URL, "view", user.getId(), ssd.getId());
-                ssdRepository.update(id);
-            }
-            ssd.setSsdRating(ssdRatingRepository.findById(user.getId() + "-" + id));
-            logger.log(ClientLevel.CLIENT, "Success");
-            return ssd;
-
+            logger.info("Request Data: {userID:" + userId + ", cpu_id:" + id + "}");
+            ResponseEntity<Object> response = ssdService.findById(id, userId);
+            return new ResponseEntity<>(response, HttpStatus.OK);
         } catch (Exception e) {
-            logger.log(ClientLevel.CLIENT, "Unsuccess");
-            return ssd;
+            logger.error("Exception: " + e.getMessage(), e);
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+        } finally {
+            logger.info("Response sent");
+            logger.info("##### FINISH REQUEST (SSD - Find By ID) #####");
         }
     }
 
     @GetMapping("/api/recommend/ssd")
-    public Page<SolidStateDrive> recommendFront(@CookieValue(value = "userId", required = false) Integer userId) {
-        List<SolidStateDrive> solidStateDrives = new ArrayList<>();
+    public ResponseEntity<Object> getRecommendItemForUser(@CookieValue(value = "userId", required = false) Integer userId) {
+        logger.info("##### REQUEST RECEIVED (SSD - Recommend) #####");
 
         try {
-            Result result = Utility.returnReccomendedItem(null, "ssd", userId);
-            solidStateDrives = doRecommender(result);
-            Page<SolidStateDrive> ssdPage = new PageImpl<>(solidStateDrives);
-            return ssdPage;
+            logger.info("Request Data: {userID:" + userId + "}");
+            ResponseEntity<Object> response = ssdService.getRecommendItemForUser(userId);
+            return new ResponseEntity<>(response, HttpStatus.OK);
         } catch (Exception e) {
-            Page<SolidStateDrive> ssdPage = new PageImpl<>(solidStateDrives);
-            return ssdPage;
+            logger.error("Exception: " + e.getMessage(), e);
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+        } finally {
+            logger.info("Response sent");
+            logger.info("##### FINISH REQUEST (SSD - Recommend) #####");
         }
     }
 
     @GetMapping("/api/recommend/ssd/{id}")
-    public Page<SolidStateDrive> recommendList(@PathVariable("id") String id, @CookieValue(value = "userId", required = false) Integer userId) {
-        SolidStateDrive ssd = ssdRepository.findByID(id);
-        List<SolidStateDrive> solidStateDrives = new ArrayList<>();
-
+    public ResponseEntity<Object> recommendList(@PathVariable("id") String id, @CookieValue(value = "userId", required = false) Integer userId) {
+        logger.info("##### REQUEST RECEIVED (SSD - Recommend by ID) #####");
         try {
-            Result result = Utility.returnReccomendedItem(ssd.getId(), "ssd", userId);
-            solidStateDrives = doRecommender(result);
-            Page<SolidStateDrive> ssdPage = new PageImpl<>(solidStateDrives);
-            return ssdPage;
+            logger.info("Request Data: {user_id:" + userId + ", item_id:" + id + "}");
+            ResponseEntity<Object> response = ssdService.getRecommendItemForUserWithItemId(id, userId);
+            return new ResponseEntity<>(response, HttpStatus.OK);
         } catch (Exception e) {
-            Page<SolidStateDrive> ssdPage = new PageImpl<>(solidStateDrives);
-            return ssdPage;
+            logger.error("Exception: " + e.getMessage(), e);
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+        } finally {
+            logger.info("Response sent");
+            logger.info("##### FINISH REQUEST (SSD - Recommend by ID) #####");
         }
-    }
-
-    public List<SolidStateDrive> doRecommender(Result result) {
-        List<SolidStateDrive> recommendList = new ArrayList<>();
-        for (int i = 0; i <10; ++i) {
-            Recommender recommender = result.getResult().get(i);
-            System.out.println(recommender.getItem() + " " + recommender.getScore());
-            recommendList.add(ssdRepository.findByID(recommender.getItem()));
-        }
-        return recommendList;
     }
 }

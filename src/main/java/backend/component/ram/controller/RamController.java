@@ -69,7 +69,7 @@ public class RamController {
     public ResponseEntity<Object> findById(@PathVariable("RamID") String id, @CookieValue(value = "userId", required = false) Integer userId) {
         logger.info("##### REQUEST RECEIVED (RAM - Find By ID) #####");
         try {
-            logger.info("Request Data: {userID:" + userId + ", cpu_id:" + id + "}");
+            logger.info("Request Data: {user_id:" + userId + ", item_id:" + id + "}");
             ResponseEntity<Object> response = ramService.findById(id, userId);
             return new ResponseEntity<>(response, HttpStatus.OK);
         } catch (Exception e) {
@@ -82,7 +82,7 @@ public class RamController {
     }
 
     @GetMapping("/api/recommend/ram")
-    public ResponseEntity<Object> reccomendFront(@CookieValue(value = "userId", required = false) Integer userId) {
+    public ResponseEntity<Object> getRecommendItemForUser(@CookieValue(value = "userId", required = false) Integer userId) {
         logger.info("##### REQUEST RECEIVED (RAM - Recommend) #####");
 
         try {
@@ -99,10 +99,10 @@ public class RamController {
     }
 
     @GetMapping("/api/recommend/ram/{id}")
-    public ResponseEntity<Object> recommendList(@PathVariable("id") String id, @CookieValue(value = "userId", required = false) Integer userId) {
+    public ResponseEntity<Object> getRecommendItemForUserWithItemId(@PathVariable("id") String id, @CookieValue(value = "userId", required = false) Integer userId) {
         logger.info("##### REQUEST RECEIVED (RAM - Recommend by ID) #####");
         try {
-            logger.info("Request Data: {userID:" + userId + ", cpu_id:" + id + "}");
+            logger.info("Request Data: {user_id:" + userId + ", item_id:" + id + "}");
             ResponseEntity<Object> response = ramService.getRecommendItemForUserWithItemId(id, userId);
             return new ResponseEntity<>(response, HttpStatus.OK);
         } catch (Exception e) {

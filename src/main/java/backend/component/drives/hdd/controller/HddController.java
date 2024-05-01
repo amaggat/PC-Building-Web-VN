@@ -1,32 +1,15 @@
 package backend.component.drives.hdd.controller;
 
 
-import backend.component.drives.hdd.repo.HddRepository;
-import backend.component.drives.hdd.entity.HardDiskDrive;
-import backend.recommendation.repository.HddRatingRepository;
+import backend.component.drives.hdd.service.HddService;
 import backend.security.utils.JwtUtils;
-import backend.user.User;
-import backend.user.UserActivity;
-import backend.user.UserActivityRepository;
-import backend.user.UserRepository;
-import backend.utility.ClientLevel;
-import backend.utility.Recommender;
-import backend.utility.Result;
-import backend.utility.Utility;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.jpa.domain.Specification;
-import org.springframework.util.StringUtils;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
-import javax.persistence.criteria.Predicate;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
 
 @RestController
 public class HddController {
@@ -34,102 +17,78 @@ public class HddController {
 
     @Autowired
     private JwtUtils jwtUtil;
-    private final UserActivityRepository userActivityRepository;
-    private final UserRepository userRepository;
-    private final HddRepository hddRepository;
-    private final HddRatingRepository hddRatingRepository;
 
-    public HddController(UserActivityRepository userActivityRepository, UserRepository userRepository, HddRepository hddRepository, HddRatingRepository hddRatingRepository) {
-        this.userActivityRepository = userActivityRepository;
-        this.userRepository = userRepository;
-        this.hddRepository = hddRepository;
-        this.hddRatingRepository = hddRatingRepository;
-    }
+    @Autowired
+    private HddService hddService;
 
     @GetMapping("/api/hdd")
-    public Page<HardDiskDrive> list(@RequestParam(name = "name", required = false) String name,
+    public ResponseEntity<Object> findByProperties(@RequestParam(name = "name", required = false) String name,
                                     @RequestParam(name = "chipset", required = false) String chipset,
                                     @RequestParam(name = "manufacturer", required = false) String manufacturer,
-                                    @RequestParam(name = "storage", required = false) String size,
+                                    @RequestParam(name = "storage", required = false) String storage,
                                     Pageable pageable) {
-        Page<HardDiskDrive> hdd = hddRepository.findAll((Specification<HardDiskDrive>) (root, cq, cb) -> {
-            Predicate p = cb.conjunction();
-            if (Objects.nonNull(chipset)) {
-                p = cb.and(p, cb.like(root.get("chipset"), "%" + chipset + "%"));
-            }
-            if (Objects.nonNull(manufacturer)) {
-                p = cb.and(p, cb.like(root.get("manufacturer"), "%" + manufacturer + "%"));
-            }
-            if (Objects.nonNull(size)) {
-                p = cb.and(p, cb.like(root.get("storage"), "%" + size + "%"));
-            }
-            if (!StringUtils.isEmpty(name)) {
-                p = cb.and(p, cb.like(root.get("fullname"), "%" + name + "%"));
-            }
-            cq.orderBy(cb.desc(root.get("fullname")), cb.asc(root.get("id")));
-            return p;
-        }, pageable);
-        return hdd;
+        logger.info("##### REQUEST RECEIVED (HDD - Find) #####");
+
+        try {
+            logger.info("Request Data: {name:" + name + ", chipset:" + chipset +
+                    ", manufacturer:" + manufacturer + ", storage:" + storage + "}");
+            ResponseEntity<Object> response = hddService.findByProperties(name, chipset, manufacturer, storage, pageable);
+            return response;
+        } catch (Exception e) {
+            logger.error("Exception: " + e.getMessage(), e);
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+        } finally {
+            logger.info("Response sent");
+            logger.info("##### FINISH REQUEST (HDD - Find) #####");
+        }
     }
 
     @GetMapping("/api/hdd/{id}")
-    public HardDiskDrive SearchByID(@PathVariable("id") String id, @CookieValue(value = "userId", required = false) Integer userId) {
-        HardDiskDrive hdd = hddRepository.findByID(id);
-
+    public ResponseEntity<Object> SearchByID(@PathVariable("id") String id, @CookieValue(value = "userId", required = false) Integer userId) {
+        logger.info("##### REQUEST RECEIVED (HDD - Find By ID) #####");
         try {
-            User user = userRepository.findByID(userId);
-            if (user != null) {
-                userActivityRepository.save(new UserActivity(user, "view", hdd.getId()));
-                Utility.sendActivity(Utility.URL, "view", user.getId(), hdd.getId());
-                hddRepository.update(id);
-            }
-            hdd.setHddRating(hddRatingRepository.findById(user.getId() + "-" + id));
-            logger.log(ClientLevel.CLIENT, "Success");
-            return hdd;
-
+            logger.info("Request Data: {userID:" + userId + ", cpu_id:" + id + "}");
+            ResponseEntity<Object> response = hddService.findById(id, userId);
+            return new ResponseEntity<>(response, HttpStatus.OK);
         } catch (Exception e) {
-            logger.log(ClientLevel.CLIENT, "Unsuccess");
-            return hdd;
+            logger.error("Exception: " + e.getMessage(), e);
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+        } finally {
+            logger.info("Response sent");
+            logger.info("##### FINISH REQUEST (HDD - Find By ID) #####");
         }
     }
 
     @GetMapping("/api/recommend/hdd")
-    public Page<HardDiskDrive> recommendFront(@CookieValue(value = "userId", required = false) Integer userId) {
-        List<HardDiskDrive> hardDiskDrives = new ArrayList<>();
+    public ResponseEntity<Object> getRecommendItemForUser(@CookieValue(value = "userId", required = false) Integer userId) {
+        logger.info("##### REQUEST RECEIVED (HDD - Recommend) #####");
+
         try {
-            Result result = Utility.returnReccomendedItem(null, "hdd", userId);
-            hardDiskDrives = doRecommender(result);
-            Page<HardDiskDrive> hddPage = new PageImpl<>(hardDiskDrives);
-            return hddPage;
+            logger.info("Request Data: {userID:" + userId + "}");
+            ResponseEntity<Object> response = hddService.getRecommendItemForUser(userId);
+            return new ResponseEntity<>(response, HttpStatus.OK);
         } catch (Exception e) {
-            Page<HardDiskDrive> hddPage = new PageImpl<>(hardDiskDrives);
-            return hddPage;
+            logger.error("Exception: " + e.getMessage(), e);
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+        } finally {
+            logger.info("Response sent");
+            logger.info("##### FINISH REQUEST (HDD - Recommend) #####");
         }
     }
 
     @GetMapping("/api/recommend/hdd/{id}")
-    public Page<HardDiskDrive> recommendList(@PathVariable("id") String id, @CookieValue(value = "userId", required = false) Integer userId) {
-        HardDiskDrive hdd = hddRepository.findByID(id);
-        List<HardDiskDrive> hardDiskDrives = new ArrayList<>();
-
+    public ResponseEntity<Object> getRecommendItemForUserWithItemId(@PathVariable("id") String id, @CookieValue(value = "userId", required = false) Integer userId) {
+        logger.info("##### REQUEST RECEIVED (HDD - Recommend by ID) #####");
         try {
-            Result result = Utility.returnReccomendedItem(hdd.getId(), "hdd", userId);
-            hardDiskDrives = doRecommender(result);
-            Page<HardDiskDrive> hddPage = new PageImpl<>(hardDiskDrives);
-            return hddPage;
+            logger.info("Request Data: {user_id:" + userId + ", item_id:" + id + "}");
+            ResponseEntity<Object> response = hddService.getRecommendItemForUserWithItemId(id, userId);
+            return new ResponseEntity<>(response, HttpStatus.OK);
         } catch (Exception e) {
-            Page<HardDiskDrive> hddPage = new PageImpl<>(hardDiskDrives);
-            return hddPage;
+            logger.error("Exception: " + e.getMessage(), e);
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+        } finally {
+            logger.info("Response sent");
+            logger.info("##### FINISH REQUEST (HDD - Recommend by ID) #####");
         }
-    }
-
-    public List<HardDiskDrive> doRecommender(Result result) {
-        List<HardDiskDrive> recommendList = new ArrayList<>();
-        for (int i = 0; i <10; ++i) {
-            Recommender recommender = result.getResult().get(i);
-            System.out.println(recommender.getItem() + " " + recommender.getScore());
-            recommendList.add(hddRepository.findByID(recommender.getItem()));
-        }
-        return recommendList;
     }
 }

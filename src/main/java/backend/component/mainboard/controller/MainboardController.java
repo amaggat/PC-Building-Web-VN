@@ -68,7 +68,7 @@ public class MainboardController {
     public ResponseEntity<Object> findById(@PathVariable("id") String id, @CookieValue(value = "userId", required = false) Integer userId) {
         logger.info("##### REQUEST RECEIVED (Mainboard - Find By ID) #####");
         try {
-            logger.info("Request Data: {userID:" + userId + ", cpu_id:" + id + "}");
+            logger.info("Request Data: {user_id:" + userId + ", item_id:" + id + "}");
             ResponseEntity<Object> response = mainboardService.findById(id, userId);
             return new ResponseEntity<>(response, HttpStatus.OK);
         } catch (Exception e) {
@@ -101,7 +101,7 @@ public class MainboardController {
     public ResponseEntity<Object> getRecommendItemForUserWithItemId(@PathVariable("id") String id, @CookieValue(value = "userId", required = false) Integer userId) {
         logger.info("##### REQUEST RECEIVED (CPU - Recommend by ID) #####");
         try {
-            logger.info("Request Data: {userID:" + userId + ", cpu_id:" + id + "}");
+            logger.info("Request Data: {user_id:" + userId + ", item_id:" + id + "}");
             ResponseEntity<Object> response = mainboardService.getRecommendItemForUserWithItemId(id, userId);
             return new ResponseEntity<>(response, HttpStatus.OK);
         } catch (Exception e) {

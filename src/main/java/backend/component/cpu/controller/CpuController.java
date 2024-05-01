@@ -44,7 +44,7 @@ public class CpuController {
     public ResponseEntity<Object> findById(@PathVariable("CpuID") String id, @CookieValue(value = "userId", required = false) Integer userId) {
         logger.info("##### REQUEST RECEIVED (CPU - Find By ID) #####");
         try {
-            logger.info("Request Data: {userID:" + userId + ", cpu_id:" + id + "}");
+            logger.info("Request Data: {user_id:" + userId + ", item_id:" + id + "}");
             ResponseEntity<Object> response = cpuService.findById(id, userId);
             return response;
         } catch (Exception e) {
@@ -78,7 +78,7 @@ public class CpuController {
     public ResponseEntity<Object> getRecommendCpuForUserWithCpuId(@PathVariable("id") String id, @CookieValue(value = "userId", required = false) Integer userId) {
         logger.info("##### REQUEST RECEIVED (CPU - Recommend by ID) #####");
         try {
-            logger.info("Request Data: {userID:" + userId + ", cpu_id:" + id + "}");
+            logger.info("Request Data: {user_id:" + userId + ", item_id:" + id + "}");
             ResponseEntity<Object> response = cpuService.getRecommendItemForUserWithItemId(id, userId);
             return response;
         } catch (Exception e) {
