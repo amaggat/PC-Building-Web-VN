@@ -39,6 +39,16 @@ public class GpuResponse extends ElectronicComponentsResponse {
         //set number of rating
         super.setNumberOfRating(graphicProcessor.getGpuRatingList().size());
 
+        //set pc profile use
+        for (PcProfile pcProfile : graphicProcessor.getPcProfileList()) {
+            this.pcProfileList.add(pcProfile.getId());
+        }
+
+        //set item rating
+        for(GpuRating gpuRating : graphicProcessor.getGpuRatingList()) {
+            ratingList.add(new GpuRatingResponse(gpuRating));
+        }
+
         //set average rating
         if (graphicProcessor.getGpuRatingList().isEmpty()) {
             super.setAverageRating(null);
@@ -57,16 +67,6 @@ public class GpuResponse extends ElectronicComponentsResponse {
             if(gpuPriceList.getPrice() < super.getMinPrice() || super.getMinPrice().equals(-1)) {
                 super.setMinPrice(gpuPriceList.getPrice());
             }
-        }
-
-        //set pc profile use
-        for (PcProfile pcProfile : graphicProcessor.getPcProfileList()) {
-            this.pcProfileList.add(pcProfile.getId());
-        }
-
-        //set gpu rating
-        for(GpuRating gpuRating : graphicProcessor.getGpuRatingList()) {
-            ratingList.add(new GpuRatingResponse(gpuRating));
         }
     }
 }

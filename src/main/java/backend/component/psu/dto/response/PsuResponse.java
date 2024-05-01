@@ -11,6 +11,8 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import javax.persistence.Column;
+import javax.validation.constraints.NotEmpty;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -18,6 +20,10 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 public class PsuResponse extends ElectronicComponentsResponse {
+
+    private Integer power;
+
+    private String standard_80 = new String();
 
     private List<PsuComponentPriceResponse> priceList = new ArrayList<>();
 
@@ -27,7 +33,8 @@ public class PsuResponse extends ElectronicComponentsResponse {
 
     public PsuResponse(PowerSupplyUnit powerSupplyUnit) {
         super(powerSupplyUnit);
-
+        this.power = powerSupplyUnit.getPower();
+        this.standard_80 = powerSupplyUnit.getStandard_80();
 
         //add price list
         for(PsuComponentPrice psuComponentPrice : powerSupplyUnit.getPriceList()) {
@@ -36,6 +43,16 @@ public class PsuResponse extends ElectronicComponentsResponse {
 
         //set number of rating
         super.setNumberOfRating(powerSupplyUnit.getPsuRatingList().size());
+
+        //set pc profile use
+        for (PcProfile pcProfile : powerSupplyUnit.getPcProfileList()) {
+            this.pcProfileList.add(pcProfile.getId());
+        }
+
+        //set item rating
+        for(PsuRating psuRating : powerSupplyUnit.getPsuRatingList()) {
+            ratingList.add(new PsuRatingResponse(psuRating));
+        }
 
         //set average rating
         if (powerSupplyUnit.getPsuRatingList().isEmpty()) {
@@ -55,16 +72,6 @@ public class PsuResponse extends ElectronicComponentsResponse {
             if(gpuPriceList.getPrice() < super.getMinPrice() || super.getMinPrice().equals(-1)) {
                 super.setMinPrice(gpuPriceList.getPrice());
             }
-        }
-
-        //set pc profile use
-        for (PcProfile pcProfile : powerSupplyUnit.getPcProfileList()) {
-            this.pcProfileList.add(pcProfile.getId());
-        }
-
-        //set gpu rating
-        for(PsuRating psuRating : powerSupplyUnit.getPsuRatingList()) {
-            ratingList.add(new PsuRatingResponse(psuRating));
         }
     }
 }

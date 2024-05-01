@@ -47,6 +47,16 @@ public class MainboardResponse extends ElectronicComponentsResponse {
         //set number of rating
         super.setNumberOfRating(mainboard.getMainboardRatingList().size());
 
+        //set pc profile use
+        for (PcProfile pcProfile : mainboard.getPcProfileList()) {
+            this.pcProfileList.add(pcProfile.getId());
+        }
+
+        //set item rating
+        for(MainboardRating mainboardRating : mainboard.getMainboardRatingList()) {
+            ratingList.add(new MainboardRatingResponse(mainboardRating));
+        }
+
         //set average rating
         if (mainboard.getMainboardRatingList().isEmpty()) {
             super.setAverageRating(null);
@@ -65,16 +75,6 @@ public class MainboardResponse extends ElectronicComponentsResponse {
             if(gpuPriceList.getPrice() < super.getMinPrice() || super.getMinPrice().equals(-1)) {
                 super.setMinPrice(gpuPriceList.getPrice());
             }
-        }
-
-        //set pc profile use
-        for (PcProfile pcProfile : mainboard.getPcProfileList()) {
-            this.pcProfileList.add(pcProfile.getId());
-        }
-
-        //set gpu rating
-        for(MainboardRating mainboardRating : mainboard.getMainboardRatingList()) {
-            ratingList.add(new MainboardRatingResponse(mainboardRating));
         }
     }
 }

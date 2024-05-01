@@ -4,6 +4,8 @@ package backend.component.cpu.dto.response;
 import backend.component.common.dto.response.ElectronicComponentsResponse;
 import backend.component.cpu.entity.CentralProcessor;
 import backend.component.cpu.entity.CpuComponentPrice;
+import backend.component.gpu.dto.response.GpuComponentPriceResponse;
+import backend.component.gpu.entity.GpuComponentPrice;
 import backend.pcprofile.PcProfile;
 import backend.recommendation.rating.CpuRating;
 import backend.utility.Utility;
@@ -37,8 +39,26 @@ public class CpuResponse extends ElectronicComponentsResponse {
         this.socket = centralProcessor.getSocket();
         this.cores = centralProcessor.getCores();
         this.threads = centralProcessor.getThreads();
+
+        //add price list
+        for(CpuComponentPrice cpuPriceList : centralProcessor.getPriceList()) {
+            this.priceList.add(new CpuComponentPriceResponse(cpuPriceList));
+        }
+
+        //set number of rating
         super.setNumberOfRating(centralProcessor.getCpuRatingList().size());
 
+        //set pc profile use
+        for (PcProfile pcProfile : centralProcessor.getPcProfileList()) {
+            this.pcProfileList.add(pcProfile.getId());
+        }
+
+        //set item rating
+        for(CpuRating cpuRating : centralProcessor.getCpuRatingList()) {
+            ratingList.add(new CpuRatingResponse(cpuRating));
+        }
+
+        //set average rating
         if (centralProcessor.getCpuRatingList().isEmpty()) {
             super.setAverageRating(null);
         } else {
@@ -50,19 +70,12 @@ public class CpuResponse extends ElectronicComponentsResponse {
             super.setAverageRating(Utility.to2DecimalDouble(avg));
         }
 
+        //set min price
         for (CpuComponentPrice cpuPriceList : centralProcessor.getPriceList()) {
             this.priceList.add(new CpuComponentPriceResponse(cpuPriceList));
             if(cpuPriceList.getPrice() < super.getMinPrice() || super.getMinPrice().equals(-1)) {
                 super.setMinPrice(cpuPriceList.getPrice());
             }
-        }
-
-        for (PcProfile pcProfile : centralProcessor.getPcProfileList()) {
-            this.pcProfileList.add(pcProfile.getId());
-        }
-
-        for(CpuRating cpuRating : centralProcessor.getCpuRatingList()) {
-            ratingList.add(new CpuRatingResponse(cpuRating));
         }
     }
 }

@@ -33,9 +33,6 @@ public class CentralProcessor extends ElectronicComponents {
     @NotEmpty
     private Integer Threads;
 
-    @Transient
-    private int minPrice;
-
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "centralProcessor", fetch = FetchType.EAGER)
     private List<CpuComponentPrice> PriceList;
 

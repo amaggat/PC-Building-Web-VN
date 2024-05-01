@@ -13,6 +13,8 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import javax.persistence.Column;
+import javax.validation.constraints.NotEmpty;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -20,6 +22,10 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 public class RamResponse extends ElectronicComponentsResponse {
+
+    private Integer clockSpeed;
+
+    private String sizeOfRam = new String();
 
     private List<RamComponentPriceResponse> priceList = new ArrayList<>();
 
@@ -29,7 +35,8 @@ public class RamResponse extends ElectronicComponentsResponse {
 
     public RamResponse(Ram ram) {
         super(ram);
-
+        this.clockSpeed = ram.getClockSpeed();
+        this.sizeOfRam = ram.getSizeOfRam();
 
         //add price list
         for(RamComponentPrice ramComponentPrice : ram.getPriceList()) {
@@ -38,6 +45,16 @@ public class RamResponse extends ElectronicComponentsResponse {
 
         //set number of rating
         super.setNumberOfRating(ram.getRamRatingList().size());
+
+        //set pc profile use
+        for (PcProfile pcProfile : ram.getPcProfileList()) {
+            this.pcProfileList.add(pcProfile.getId());
+        }
+
+        //set item rating
+        for(RamRating ramRating : ram.getRamRatingList()) {
+            ratingList.add(new RamRatingResponse(ramRating));
+        }
 
         //set average rating
         if (ram.getRamRatingList().isEmpty()) {
@@ -57,16 +74,6 @@ public class RamResponse extends ElectronicComponentsResponse {
             if(ramComponentPrice.getPrice() < super.getMinPrice() || super.getMinPrice().equals(-1)) {
                 super.setMinPrice(ramComponentPrice.getPrice());
             }
-        }
-
-        //set pc profile use
-        for (PcProfile pcProfile : ram.getPcProfileList()) {
-            this.pcProfileList.add(pcProfile.getId());
-        }
-
-        //set gpu rating
-        for(RamRating ramRating : ram.getRamRatingList()) {
-            ratingList.add(new RamRatingResponse(ramRating));
         }
     }
 }
