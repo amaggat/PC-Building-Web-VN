@@ -23,6 +23,8 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
@@ -52,9 +54,11 @@ public class MainboardServiceImpl implements MainboardService {
     private MainRatingRepository mainRatingRepository;
 
     @Override
-    public Object findByProperties(String name, String chipset, String socket, String manufacturer, String sizeOfRam,
-                                            String memorySlot, String formFactor, Pageable pageable) {
+    public ResponseEntity<Object> findByProperties(String name, String chipset, String socket, String manufacturer, String sizeOfRam,
+                                                   String memorySlot, String formFactor, Pageable pageable) {
         List<MainboardResponse> responseList = new ArrayList<>();
+
+        logger.info("Start find Mainboard with param");
         Page<Mainboard> mainboardPage = mainboardRepository.findAll((Specification<Mainboard>) (root, criteriaQuery, criteriaBuilder) -> {
             Predicate predicate = criteriaBuilder.conjunction();
             if (Objects.nonNull(chipset)) {
@@ -81,18 +85,27 @@ public class MainboardServiceImpl implements MainboardService {
             criteriaQuery.orderBy(criteriaBuilder.desc(root.get("fullname")), criteriaBuilder.asc(root.get("id")));
             return predicate;
         }, pageable);
+        logger.info("Finish find Mainboard with param, size [" + mainboardPage.getTotalElements() + "]");
 
+        logger.info("Create DTO response");
         for (Mainboard mainboard : mainboardPage) {
             responseList.add(new MainboardResponse(mainboard));
         }
 
         Page<MainboardResponse> mainboardResponsePage = new PageImpl<>(responseList, pageable, mainboardPage.getTotalElements());
-        return mainboardResponsePage;
+        return new ResponseEntity<>(mainboardResponsePage, HttpStatus.OK);
     }
 
     @Override
-    public Object findById(String id, Integer userId) {
+    public ResponseEntity<Object> findById(String id, Integer userId) {
+        logger.info("Start find Mainboard by ID [" + id + "]");
         Mainboard mainboard = mainboardRepository.findByID(id);
+        if(mainboard == null) {
+            logger.info("Mainboard by ID [" + id + "] not found");
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+
+        logger.info("Mainboard by ID [" + id + "] found");
         try {
             User user = userRepository.findByID(userId);
 
@@ -103,55 +116,52 @@ public class MainboardServiceImpl implements MainboardService {
             }
             mainboard.setMainboardRating(mainRatingRepository.findById(user.getId() + "-" + id));
             logger.info("Save success");
-            MainboardResponse response = new MainboardResponse(mainboard);
-            return response;
 
         } catch (Exception e) {
             logger.error("Exception: " + e.getMessage(), e);
-            MainboardResponse response = new MainboardResponse(mainboard);
-            return response;
         }
+
+        MainboardResponse response = new MainboardResponse(mainboard);
+        return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
     @Override
-    public Object getRecommendItemForUser(Integer userId) {
-        List<Mainboard> mainboards = new ArrayList<>();
+    public ResponseEntity<Object> getRecommendItemForUser(Integer userId) {
+        List<MainboardResponse> mainboards = new ArrayList<>();
 
         try {
             Result result = Utility.returnReccomendedItem(null, "mainboard", userId);
             mainboards = doRecommender(result);
-            Page<Mainboard> mainboardPage = new PageImpl<>(mainboards);
-            return mainboardPage;
         } catch (Exception e) {
             logger.error("Exception: " + e.getMessage(), e);
-            Page<Mainboard> mainboardPage = new PageImpl<>(mainboards);
-            return mainboardPage;
         }
+
+        Page<MainboardResponse> mainboardPage = new PageImpl<>(mainboards);
+        return new ResponseEntity<>(mainboardPage, HttpStatus.OK);
     }
 
     @Override
-    public Object getRecommendItemForUserWithItemId(String id, Integer userId) {
+    public ResponseEntity<Object> getRecommendItemForUserWithItemId(String id, Integer userId) {
         Mainboard mainboard = mainboardRepository.findByID(id);
-        List<Mainboard> mainboards = new ArrayList<>();
+        List<MainboardResponse> mainboards = new ArrayList<>();
 
         try {
             Result result = Utility.returnReccomendedItem(mainboard.getId(), "mainboard", userId);
             mainboards = doRecommender(result);
-            Page<Mainboard> mainboardPage = new PageImpl<>(mainboards);
-            return mainboardPage;
         } catch (Exception e) {
             logger.error("Exception: " + e.getMessage(), e);
-            Page<Mainboard> mainboardPage = new PageImpl<>(mainboards);
-            return mainboardPage;
         }
+
+        Page<MainboardResponse> mainboardPage = new PageImpl<>(mainboards);
+        return new ResponseEntity<>(mainboardPage, HttpStatus.OK);
     }
 
-    public List<Mainboard> doRecommender(Result result) {
-        List<Mainboard> recommendList = new ArrayList<>();
+    public List<MainboardResponse> doRecommender(Result result) {
+        List<MainboardResponse> recommendList = new ArrayList<>();
         for (int i = 0; i <10; ++i) {
             Recommender recommender = result.getResult().get(i);
             System.out.println(recommender.getItem() + " " + recommender.getScore());
-            recommendList.add(mainboardRepository.findByID(recommender.getItem()));
+            recommendList.add(new MainboardResponse(mainboardRepository.findByID(recommender.getItem())));
         }
         return recommendList;
     }

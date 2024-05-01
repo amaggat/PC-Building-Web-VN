@@ -3,16 +3,17 @@ package backend.component.mainboard.service;
 import backend.component.mainboard.entity.Mainboard;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.ResponseEntity;
 
 public interface MainboardService {
 
-    Object findByProperties(String name, String chipset, String socket, String manufacturer, String sizeOfRam,
-                                     String memorySlot, String formFactor, Pageable pageable);
+    ResponseEntity<Object> findByProperties(String name, String chipset, String socket, String manufacturer, String sizeOfRam,
+                                            String memorySlot, String formFactor, Pageable pageable);
 
-    Object findById(String id, Integer userId);
+    ResponseEntity<Object> findById(String id, Integer userId);
 
-    Object getRecommendItemForUser(Integer userId);
+    ResponseEntity<Object> getRecommendItemForUser(Integer userId);
 
-    Object getRecommendItemForUserWithItemId(String id, Integer userId);
+    ResponseEntity<Object> getRecommendItemForUserWithItemId(String id, Integer userId);
 
 }

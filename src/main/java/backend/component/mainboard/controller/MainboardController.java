@@ -53,7 +53,7 @@ public class MainboardController {
             logger.info("Request Data: {name:" + name + ", chipset:" + chipset +
                     ", manufacturer:" + manufacturer + ", size_of_ram:" + sizeOfRam
                     + ", memorySlot:" + memorySlot+ ", formFactor:" + formFactor + "}");
-            Object response = mainboardService.findByProperties(name, chipset, socket, manufacturer, sizeOfRam, memorySlot, formFactor, pageable);
+            ResponseEntity<Object> response = mainboardService.findByProperties(name, chipset, socket, manufacturer, sizeOfRam, memorySlot, formFactor, pageable);
             return new ResponseEntity<>(response, HttpStatus.OK);
         } catch (Exception e) {
             logger.error("Exception: " + e.getMessage(), e);
@@ -69,7 +69,7 @@ public class MainboardController {
         logger.info("##### REQUEST RECEIVED (Mainboard - Find By ID) #####");
         try {
             logger.info("Request Data: {userID:" + userId + ", cpu_id:" + id + "}");
-            Object response = mainboardService.findById(id, userId);
+            ResponseEntity<Object> response = mainboardService.findById(id, userId);
             return new ResponseEntity<>(response, HttpStatus.OK);
         } catch (Exception e) {
             logger.error("Exception: " + e.getMessage(), e);
@@ -86,7 +86,7 @@ public class MainboardController {
 
         try {
             logger.info("Request Data: {userID:" + userId + "}");
-            Object response = mainboardService.getRecommendItemForUser(userId);
+            ResponseEntity<Object> response = mainboardService.getRecommendItemForUser(userId);
             return new ResponseEntity<>(response, HttpStatus.OK);
         } catch (Exception e) {
             logger.error("Exception: " + e.getMessage(), e);
@@ -102,7 +102,7 @@ public class MainboardController {
         logger.info("##### REQUEST RECEIVED (CPU - Recommend by ID) #####");
         try {
             logger.info("Request Data: {userID:" + userId + ", cpu_id:" + id + "}");
-            Object response = mainboardService.getRecommendItemForUserWithItemId(id, userId);
+            ResponseEntity<Object> response = mainboardService.getRecommendItemForUserWithItemId(id, userId);
             return new ResponseEntity<>(response, HttpStatus.OK);
         } catch (Exception e) {
             logger.error("Exception: " + e.getMessage(), e);

@@ -120,12 +120,15 @@ public class GpuServiceImpl implements GpuService {
         List<GpuResponse> graphicProcessors = new ArrayList<>();
 
         try {
+            logger.info("Find recommend GPU for User ID [" + userId + "]");
             Result result = Utility.returnReccomendedItem(null, "gpu", userId);
             graphicProcessors = doRecommender(result);
+            logger.info("Recommend item received");
         } catch (Exception e) {
             logger.error("Exception: " + e.getMessage(), e);
         }
 
+        logger.info("Create DTO response");
         Page<GpuResponse> gpuPage = new PageImpl<>(graphicProcessors);
         return new ResponseEntity<>(gpuPage, HttpStatus.OK);
     }

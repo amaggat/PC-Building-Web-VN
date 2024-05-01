@@ -91,8 +91,8 @@ public class CpuServiceImpl implements CpuService {
             logger.info("CPU by ID [" + id + "] not found");
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
-
         logger.info("CPU by ID [" + id + "] found");
+
         try {
             User user = userRepository.findByID(userId);
             if (user != null) {
@@ -114,29 +114,41 @@ public class CpuServiceImpl implements CpuService {
     public ResponseEntity<Object> getRecommendItemForUser(Integer userId) {
         List<CpuResponse> centralProcessors = new ArrayList<>();
         try {
-            logger.info("Find recommend item for User ID [" + userId + "]");
+            logger.info("Find recommend CPU for User ID [" + userId + "]");
             Result result = Utility.returnReccomendedItem(null, "cpu", userId);
             centralProcessors = doRecommender(result);
+            logger.info("Recommend item received");
         } catch (Exception e) {
             logger.error("Exception: " + e.getMessage(), e);
         }
 
+        logger.info("Create DTO response");
         Page<CpuResponse> response = new PageImpl<>(centralProcessors);
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
     @Override
     public ResponseEntity<Object> getRecommendItemForUserWithItemId(String id, Integer userId) {
+        logger.info("Find recommend CPU with [" + id + "] for User ID [" + userId + "]");
+
         CentralProcessor cpu = cpuRepository.findByID(id);
+        if(cpu == null) {
+            logger.info("CPU by ID [" + id + "] not found");
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+        logger.info("CPU by ID [" + id + "] found");
+
         List<CpuResponse> centralProcessors = new ArrayList<>();
         try {
-            logger.info("Find recommend from item [" + id + "] for User ID [" + userId + "]");
+            logger.info("Start get recommend item");
             Result result = Utility.returnReccomendedItem(cpu.getId(), "cpu", userId);
+            logger.info("Recommend item received");
             centralProcessors = doRecommender(result);
         } catch (Exception e) {
             logger.error("Exception: " + e.getMessage(), e);
         }
 
+        logger.info("Create DTO response");
         Page<CpuResponse> response = new PageImpl<>(centralProcessors);
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
@@ -145,7 +157,7 @@ public class CpuServiceImpl implements CpuService {
         List<CpuResponse> recommendList = new ArrayList<>();
         for (int i = 0; i <10; ++i) {
             Recommender recommender = result.getResult().get(i);
-            System.out.println(recommender.getItem() + " " + recommender.getScore());
+            logger.info(recommender.getItem() + " score: " + recommender.getScore());
             recommendList.add(new CpuResponse(cpuRepository.findByID(recommender.getItem())));
         }
         return recommendList;
