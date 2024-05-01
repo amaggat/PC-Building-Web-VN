@@ -70,7 +70,7 @@ public class RatingController {
     @PostMapping("/user/rating/gpu")
     public ResponseEntity<?> rating(@RequestBody GpuRating gpuRating, @CookieValue(value = "userId") Integer userid) {
         gpuRatingRepository.save(gpuRating);
-        updateLog(userid, gpuRating.getGraphicProcessor(), gpuRating.getRating());
+        updateLog(userid, gpuRating.getGraphicProcessor().getId(), gpuRating.getRating());
         return ResponseEntity.ok(new AuthenticationResponse("Rated", userid.toString()));
     }
 
