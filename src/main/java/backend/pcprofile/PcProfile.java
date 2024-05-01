@@ -146,9 +146,9 @@ public class PcProfile {
 //        return price;
 //    }
 //
-    public Pair<Integer, String> getUser() {
-        return new Pair<>(this.user.getId(), this.user.getName());
-    }
+//    public Pair<Integer, String> getUser() {
+//        return new Pair<>(this.user.getId(), this.user.getName());
+//    }
 //
 //    public void setUser(User user) {
 //        this.user = user;

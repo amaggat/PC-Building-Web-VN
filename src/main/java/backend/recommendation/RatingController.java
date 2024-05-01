@@ -56,7 +56,7 @@ public class RatingController {
     @PostMapping("/user/rating/cpu")
     public ResponseEntity<?> rating(@RequestBody CpuRating cpuRating, @CookieValue(value = "userId") Integer userid) {
         cpuRatingRepository.save(cpuRating);
-        updateLog(userid, cpuRating.getCentralProcessor(), cpuRating.getRating());
+        updateLog(userid, cpuRating.getCentralProcessor().getId(), cpuRating.getRating());
         return ResponseEntity.ok(new AuthenticationResponse("Rated", userid.toString()));
     }
 

@@ -6,6 +6,7 @@ import backend.component.cpu.entity.CentralProcessor;
 import backend.component.cpu.entity.CpuPriceList;
 import backend.pcprofile.PcProfile;
 import backend.recommendation.rating.CpuRating;
+import backend.utility.Utility;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -35,16 +36,25 @@ public class CentralProcessorResponse extends ElectronicComponentsResponse {
 
     private List<String> pcProfileList = new ArrayList<>();
 
-    private List<CpuRating> ratingList = new ArrayList<>();
+    private List<CpuRatingResponse> ratingList = new ArrayList<>();
 
     public CentralProcessorResponse(CentralProcessor centralProcessor) {
         super(centralProcessor);
         this.socket = centralProcessor.getSocket();
         this.cores = centralProcessor.getCores();
         this.threads = centralProcessor.getThreads();
+        this.numberOfRating = centralProcessor.getCpuRatingList().size();
 
-        this.numberOfRating = centralProcessor.getNumberOfRating();
-        this.averageRating = centralProcessor.getAverageRating();
+        if (centralProcessor.getCpuRatingList().isEmpty()) {
+            this.averageRating = null;
+        } else {
+            double avg = 0.0;
+            for (CpuRating obj : centralProcessor.getCpuRatingList()) {
+                avg += obj.getRating();
+            }
+            avg = avg / centralProcessor.getCpuRatingList().size();
+            this.averageRating =  Utility.to2DecimalDouble(avg);
+        }
 
         for (CpuPriceList cpuPriceList : centralProcessor.getPriceList()) {
             this.priceList.add(new CpuPriceListResponse(cpuPriceList));
@@ -57,6 +67,8 @@ public class CentralProcessorResponse extends ElectronicComponentsResponse {
             this.pcProfileList.add(pcProfile.getId());
         }
 
-        this.ratingList = new ArrayList<>();
+        for(CpuRating cpuRating : centralProcessor.getCpuRatingList()) {
+            ratingList.add(new CpuRatingResponse(cpuRating));
+        }
     }
 }

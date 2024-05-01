@@ -59,8 +59,8 @@ public class PcProfileController {
 
     @PostMapping("user/addPc")
     public ResponseEntity<?> addNewPcProfile(@RequestBody PcProfile pcProfile) {
-        pcProfile.setId(pcProfile.getUser().getKey() + "-" + pcProfile.getName());
+        pcProfile.setId(pcProfile.getUser().getId() + "-" + pcProfile.getName());
         pcProfileRepository.save(pcProfile);
-        return ResponseEntity.ok(new AuthenticationResponse("Added", pcProfile.getUser().getValue()));
+        return ResponseEntity.ok(new AuthenticationResponse("Added", pcProfile.getUser().getName()));
     }
 }
