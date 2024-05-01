@@ -1,7 +1,7 @@
 package backend.component.mainboard;
 
 
-import backend.component.model.ElectronicComponents;
+import backend.component.common.model.ElectronicComponents;
 import backend.pcprofile.PcProfile;
 import backend.recommendation.rating.MainboardRating;
 import backend.utility.Utility;

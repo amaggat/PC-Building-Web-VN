@@ -1,6 +1,6 @@
 package backend.component.drives.hdd;
 
-import backend.component.model.ElectronicComponents;
+import backend.component.common.model.ElectronicComponents;
 import backend.pcprofile.PcProfile;
 import backend.recommendation.rating.HddRating;
 import backend.utility.Utility;

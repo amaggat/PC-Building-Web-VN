@@ -1,7 +1,7 @@
 package backend.component.ram;
 
 
-import backend.component.model.ElectronicComponents;
+import backend.component.common.model.ElectronicComponents;
 import backend.pcprofile.PcProfile;
 import backend.recommendation.rating.RamRating;
 import backend.utility.Utility;

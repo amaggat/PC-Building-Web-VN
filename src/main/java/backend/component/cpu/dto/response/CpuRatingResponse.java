@@ -1,6 +1,6 @@
 package backend.component.cpu.dto.response;
 
-import backend.component.common.RatingResponse;
+import backend.component.common.dto.response.RatingResponse;
 import backend.recommendation.rating.CpuRating;
 import lombok.AllArgsConstructor;
 import lombok.Data;

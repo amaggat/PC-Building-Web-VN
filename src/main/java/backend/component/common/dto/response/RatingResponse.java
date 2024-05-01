@@ -1,4 +1,4 @@
-package backend.component.common;
+package backend.component.common.dto.response;
 
 import backend.recommendation.score.Rating;
 import backend.user.UserInfo;

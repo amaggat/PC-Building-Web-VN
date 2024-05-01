@@ -1,7 +1,7 @@
 package backend.component.drives.sdd;
 
 
-import backend.component.model.ElectronicComponents;
+import backend.component.common.model.ElectronicComponents;
 import backend.pcprofile.PcProfile;
 import backend.recommendation.rating.SsdRating;
 import backend.utility.Utility;

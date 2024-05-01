@@ -29,7 +29,7 @@ public class CpuController {
 
         try {
             logger.info("Request Data: {name:" + name + ", chipset:" + chipset + ", manufacturer:" + manufacturer + ", socket:" + socket + ", cores:" + cores + "}");
-            Object response = cpuService.findCpuByProperties(name, chipset, manufacturer, socket, cores, pageable);
+            Object response = cpuService.findByProperties(name, chipset, manufacturer, socket, cores, pageable);
             return new ResponseEntity<>(response, HttpStatus.OK);
         } catch (Exception e) {
             logger.error("Exception: " + e.getMessage(), e);
@@ -38,24 +38,6 @@ public class CpuController {
             logger.info("Response sent");
             logger.info("##### FINISH REQUEST (CPU - Find) #####");
         }
-    }
-
-    @GetMapping("/api/recommend/cpu")
-    public ResponseEntity<Object> getRecommendCpuForUser(@CookieValue(value = "userId", required = false) Integer userId) {
-        logger.info("##### REQUEST RECEIVED (CPU - Recommend) #####");
-
-        try {
-            logger.info("Request Data: {userID:" + userId + "}");
-            Object response = cpuService.recommendCpuForUser(userId);
-            return new ResponseEntity<>(response, HttpStatus.OK);
-        } catch (Exception e) {
-            logger.error("Exception: " + e.getMessage(), e);
-            return new ResponseEntity<>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
-        } finally {
-            logger.info("Response sent");
-            logger.info("##### FINISH REQUEST (CPU - Recommend) #####");
-        }
-
     }
 
     @GetMapping("/api/cpu/{CpuID}")
@@ -74,12 +56,30 @@ public class CpuController {
         }
     }
 
+
+    @GetMapping("/api/recommend/cpu")
+    public ResponseEntity<Object> getRecommendCpuForUser(@CookieValue(value = "userId", required = false) Integer userId) {
+        logger.info("##### REQUEST RECEIVED (CPU - Recommend) #####");
+
+        try {
+            logger.info("Request Data: {userID:" + userId + "}");
+            Object response = cpuService.getRecommendItemForUser(userId);
+            return new ResponseEntity<>(response, HttpStatus.OK);
+        } catch (Exception e) {
+            logger.error("Exception: " + e.getMessage(), e);
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+        } finally {
+            logger.info("Response sent");
+            logger.info("##### FINISH REQUEST (CPU - Recommend) #####");
+        }
+
+    }
     @GetMapping("/api/recommend/cpu/{id}")
     public ResponseEntity<Object> getRecommendCpuForUserWithCpuId(@PathVariable("id") String id, @CookieValue(value = "userId", required = false) Integer userId) {
         logger.info("##### REQUEST RECEIVED (CPU - Recommend by ID) #####");
         try {
             logger.info("Request Data: {userID:" + userId + ", cpu_id:" + id + "}");
-            Object response = cpuService.getRecommendCpuForUserWithCpuId(id, userId);
+            Object response = cpuService.getRecommendItemForUserWithItemId(id, userId);
             return new ResponseEntity<>(response, HttpStatus.OK);
         } catch (Exception e) {
             logger.error("Exception: " + e.getMessage(), e);

@@ -1,6 +1,6 @@
-package backend.component.common;
+package backend.component.common.dto.response;
 
-import backend.component.model.ElectronicComponents;
+import backend.component.common.model.ElectronicComponents;
 import backend.recommendation.score.Category;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -27,9 +27,11 @@ public class ElectronicComponentsResponse {
 
     private Integer view;
 
+    private Integer numberOfRating;
+
     private Double averageRating;
 
-    private Integer numberOfRating;
+    private Integer minPrice = -1;
 
     public ElectronicComponentsResponse(ElectronicComponents electronicComponents) {
         this.id = electronicComponents.getId();
@@ -40,7 +42,5 @@ public class ElectronicComponentsResponse {
         this.fullname = electronicComponents.getFullname();
         this.category = electronicComponents.getCategory();
         this.view = electronicComponents.getView();
-        this.averageRating = electronicComponents.getAverageRating();
-        this.numberOfRating = electronicComponents.getNumberOfRating();
     }
 }

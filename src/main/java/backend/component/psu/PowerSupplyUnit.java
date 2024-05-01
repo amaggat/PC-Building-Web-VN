@@ -1,6 +1,6 @@
 package backend.component.psu;
 
-import backend.component.model.ElectronicComponents;
+import backend.component.common.model.ElectronicComponents;
 import backend.pcprofile.PcProfile;
 import backend.recommendation.rating.PsuRating;
 import backend.utility.Utility;

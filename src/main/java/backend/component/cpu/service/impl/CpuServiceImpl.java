@@ -46,7 +46,7 @@ public class CpuServiceImpl implements CpuService {
     private CpuRepository cpuRepository;
 
     @Override
-    public Object findCpuByProperties(String name, String chipset, String manufacturer, String socket, Integer cores, Pageable pageable) {
+    public Object findByProperties(String name, String chipset, String manufacturer, String socket, Integer cores, Pageable pageable) {
         List<CpuResponse> responseList = new ArrayList<>();
 
         Page<CentralProcessor> cpuPages = cpuRepository.findAll((Specification<CentralProcessor>) (root, cq, cb) -> {
@@ -79,7 +79,7 @@ public class CpuServiceImpl implements CpuService {
     }
 
     @Override
-    public Object recommendCpuForUser(Integer userId) {
+    public Object getRecommendItemForUser(Integer userId) {
         List<CentralProcessor> centralProcessors = new ArrayList<>();
         try {
             Result result = Utility.returnReccomendedItem(null, "cpu", userId);
@@ -114,7 +114,7 @@ public class CpuServiceImpl implements CpuService {
     }
 
     @Override
-    public Object getRecommendCpuForUserWithCpuId(String id, Integer userId) {
+    public Object getRecommendItemForUserWithItemId(String id, Integer userId) {
         CentralProcessor cpu = cpuRepository.findByID(id);
         List<CentralProcessor> centralProcessors = new ArrayList<>();
         System.out.println("User: " + userId);

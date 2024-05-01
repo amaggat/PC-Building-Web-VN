@@ -1,9 +1,9 @@
 package backend.component.cpu.dto.response;
 
 
-import backend.component.common.ElectronicComponentsResponse;
+import backend.component.common.dto.response.ElectronicComponentsResponse;
 import backend.component.cpu.entity.CentralProcessor;
-import backend.component.cpu.entity.CpuPriceList;
+import backend.component.cpu.entity.CpuComponentPrice;
 import backend.pcprofile.PcProfile;
 import backend.recommendation.rating.CpuRating;
 import backend.utility.Utility;
@@ -26,13 +26,7 @@ public class CpuResponse extends ElectronicComponentsResponse {
 
     private Integer threads;
 
-    private Integer minPrice = -1;
-
-    private Integer numberOfRating;
-
-    private Double averageRating;
-
-    private List<CpuPriceListResponse> priceList = new ArrayList<>();
+    private List<CpuComponentPriceResponse> priceList = new ArrayList<>();
 
     private List<String> pcProfileList = new ArrayList<>();
 
@@ -43,23 +37,23 @@ public class CpuResponse extends ElectronicComponentsResponse {
         this.socket = centralProcessor.getSocket();
         this.cores = centralProcessor.getCores();
         this.threads = centralProcessor.getThreads();
-        this.numberOfRating = centralProcessor.getCpuRatingList().size();
+        super.setNumberOfRating(centralProcessor.getCpuRatingList().size());
 
         if (centralProcessor.getCpuRatingList().isEmpty()) {
-            this.averageRating = null;
+            super.setAverageRating(null);
         } else {
             double avg = 0.0;
             for (CpuRating obj : centralProcessor.getCpuRatingList()) {
                 avg += obj.getRating();
             }
             avg = avg / centralProcessor.getCpuRatingList().size();
-            this.averageRating =  Utility.to2DecimalDouble(avg);
+            super.setAverageRating(Utility.to2DecimalDouble(avg));
         }
 
-        for (CpuPriceList cpuPriceList : centralProcessor.getPriceList()) {
-            this.priceList.add(new CpuPriceListResponse(cpuPriceList));
-            if(cpuPriceList.getPrice() < this.minPrice || this.minPrice.equals(-1)) {
-                this.minPrice = cpuPriceList.getPrice();
+        for (CpuComponentPrice cpuPriceList : centralProcessor.getPriceList()) {
+            this.priceList.add(new CpuComponentPriceResponse(cpuPriceList));
+            if(cpuPriceList.getPrice() < super.getMinPrice() || super.getMinPrice().equals(-1)) {
+                super.setMinPrice(cpuPriceList.getPrice());
             }
         }
 
