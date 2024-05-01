@@ -22,11 +22,11 @@ public class GpuController {
     private GpuService gpuService;
 
     @GetMapping("/api/gpu")
-    public ResponseEntity<Object> list(@RequestParam(name = "name", required = false) String name,
-                                       @RequestParam(name = "chipset", required = false) String chipset,
-                                       @RequestParam(name = "manufacturer", required = false) String manufacturer,
-                                       @RequestParam(name = "VRam", required = false) Integer VRam,
-                                       Pageable pageable) {
+    public ResponseEntity<Object> findByProperties(@RequestParam(name = "name", required = false) String name,
+                                                   @RequestParam(name = "chipset", required = false) String chipset,
+                                                   @RequestParam(name = "manufacturer", required = false) String manufacturer,
+                                                   @RequestParam(name = "VRam", required = false) Integer VRam,
+                                                   Pageable pageable) {
         logger.info("##### REQUEST RECEIVED (GPU - Find) #####");
 
         try {
@@ -43,7 +43,7 @@ public class GpuController {
     }
 
     @GetMapping("/api/gpu/{id}")
-    public ResponseEntity<Object> SearchById(@PathVariable("id") String id, @CookieValue(value = "userId", required = false) Integer userId) {
+    public ResponseEntity<Object> findById(@PathVariable("id") String id, @CookieValue(value = "userId", required = false) Integer userId) {
         logger.info("##### REQUEST RECEIVED (GPU - Find By ID) #####");
         try {
             logger.info("Request Data: {userID:" + userId + ", cpu_id:" + id + "}");
@@ -59,7 +59,7 @@ public class GpuController {
     }
 
     @GetMapping("/api/recommend/gpu")
-    public ResponseEntity<Object> recommendFront(@CookieValue(value = "userId", required = false) Integer userId) {
+    public ResponseEntity<Object> getRecommendItemForUser(@CookieValue(value = "userId", required = false) Integer userId) {
         logger.info("##### REQUEST RECEIVED (GPU - Recommend) #####");
 
         try {
@@ -76,7 +76,7 @@ public class GpuController {
     }
 
     @GetMapping("/api/recommend/gpu/{id}")
-    public ResponseEntity<Object> recommendList(@PathVariable("id") String id, @CookieValue(value = "userId", required = false) Integer userId) {
+    public ResponseEntity<Object> getRecommendItemForUserWithItemId(@PathVariable("id") String id, @CookieValue(value = "userId", required = false) Integer userId) {
         logger.info("##### REQUEST RECEIVED (CPU - Recommend by ID) #####");
         try {
             logger.info("Request Data: {userID:" + userId + ", cpu_id:" + id + "}");
