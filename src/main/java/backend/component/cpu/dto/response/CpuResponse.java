@@ -18,7 +18,7 @@ import java.util.List;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class CentralProcessorResponse extends ElectronicComponentsResponse {
+public class CpuResponse extends ElectronicComponentsResponse {
 
     private String socket;
 
@@ -38,7 +38,7 @@ public class CentralProcessorResponse extends ElectronicComponentsResponse {
 
     private List<CpuRatingResponse> ratingList = new ArrayList<>();
 
-    public CentralProcessorResponse(CentralProcessor centralProcessor) {
+    public CpuResponse(CentralProcessor centralProcessor) {
         super(centralProcessor);
         this.socket = centralProcessor.getSocket();
         this.cores = centralProcessor.getCores();

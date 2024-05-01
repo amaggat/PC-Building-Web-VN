@@ -1,7 +1,6 @@
 package backend.component.cpu.service.impl;
 
-import backend.component.cpu.controller.CpuController;
-import backend.component.cpu.dto.response.CentralProcessorResponse;
+import backend.component.cpu.dto.response.CpuResponse;
 import backend.component.cpu.entity.CentralProcessor;
 import backend.component.cpu.repo.CpuRepository;
 import backend.component.cpu.service.CpuService;
@@ -48,7 +47,7 @@ public class CpuServiceImpl implements CpuService {
 
     @Override
     public Object findCpuByProperties(String name, String chipset, String manufacturer, String socket, Integer cores, Pageable pageable) {
-        List<CentralProcessorResponse> responseList = new ArrayList<>();
+        List<CpuResponse> responseList = new ArrayList<>();
 
         Page<CentralProcessor> cpuPages = cpuRepository.findAll((Specification<CentralProcessor>) (root, cq, cb) -> {
             Predicate p = cb.conjunction();
@@ -72,10 +71,10 @@ public class CpuServiceImpl implements CpuService {
         }, pageable);
 
         for (CentralProcessor cpu : cpuPages) {
-            responseList.add(new CentralProcessorResponse(cpu));
+            responseList.add(new CpuResponse(cpu));
         }
 
-        Page<CentralProcessorResponse> responsePage = new PageImpl<>(responseList, pageable, cpuPages.getTotalElements());
+        Page<CpuResponse> responsePage = new PageImpl<>(responseList, pageable, cpuPages.getTotalElements());
         return responsePage;
     }
 
@@ -96,7 +95,7 @@ public class CpuServiceImpl implements CpuService {
     @Override
     public Object findById(String id, Integer userId) {
         CentralProcessor cpu = cpuRepository.findByID(id);
-        CentralProcessorResponse response = new CentralProcessorResponse(cpu);
+        CpuResponse response = new CpuResponse(cpu);
         try {
             User user = userRepository.findByID(userId);
             if (user != null) {
