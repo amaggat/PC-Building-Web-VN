@@ -63,7 +63,7 @@ public class RatingController {
     @PostMapping("/user/rating/ssd")
     public ResponseEntity<?> rating(@RequestBody SsdRating ssdRating, @CookieValue(value = "userId") Integer userid) {
         ssdRatingRepository.save(ssdRating);
-        updateLog(userid, ssdRating.getSsd(), ssdRating.getRating());
+        updateLog(userid, ssdRating.getSsd().getId(), ssdRating.getRating());
         return ResponseEntity.ok(new AuthenticationResponse("Rated", userid.toString()));
     }
 
@@ -84,14 +84,14 @@ public class RatingController {
     @PostMapping("/user/rating/ram")
     public ResponseEntity<?> rating(@RequestBody RamRating ramRating, @CookieValue(value = "userId") Integer userid) {
         ramRatingRepository.save(ramRating);
-        updateLog(userid, ramRating.getRam(), ramRating.getRating());
+        updateLog(userid, ramRating.getRam().getId(), ramRating.getRating());
         return ResponseEntity.ok(new AuthenticationResponse("Rated", userid.toString()));
     }
 
     @PostMapping("/user/rating/hdd")
     public ResponseEntity<?> rating(@RequestBody HddRating hddRating, @CookieValue(value = "userId") Integer userid) {
         hddRatingRepository.save(hddRating);
-        updateLog(userid, hddRating.getHdd(), hddRating.getRating());
+        updateLog(userid, hddRating.getHdd().getId(), hddRating.getRating());
         return ResponseEntity.ok(new AuthenticationResponse("Rated", userid.toString()));
     }
 
