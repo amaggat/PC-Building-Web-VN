@@ -1,6 +1,5 @@
 package backend.component.gpu.service.impl;
 
-import backend.component.cpu.dto.response.CpuResponse;
 import backend.component.gpu.dto.response.GpuResponse;
 import backend.component.gpu.entity.GraphicProcessor;
 import backend.component.gpu.repo.GpuRepository;
@@ -11,13 +10,13 @@ import backend.user.User;
 import backend.user.UserActivity;
 import backend.user.UserActivityRepository;
 import backend.user.UserRepository;
-import backend.utility.ClientLevel;
 import backend.utility.Recommender;
 import backend.utility.Result;
 import backend.utility.Utility;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
@@ -52,6 +51,9 @@ public class GpuServiceImpl implements GpuService {
 
     @Autowired
     private GpuRatingRepository gpuRatingRepository;
+
+    @Value("${pcrs.recommend.item.no}")
+    private Integer recNo;
 
     @Override
     public ResponseEntity<Object> findByProperties(String name, String chipset, String manufacturer, Integer VRam, Pageable pageable) {
@@ -103,6 +105,7 @@ public class GpuServiceImpl implements GpuService {
                 userActivityRepository.save(new UserActivity(user, "view", gpu.getId()));
                 Utility.sendActivity(Utility.URL, "view", user.getId(), gpu.getId());
                 gpuRepository.update(id);
+                logger.info("Save success");
             }
             gpu.setGpuRating(gpuRatingRepository.findById(user.getId() + "-" + id));
 
@@ -117,10 +120,9 @@ public class GpuServiceImpl implements GpuService {
 
     @Override
     public ResponseEntity<Object> getRecommendItemForUser(Integer userId) {
+        logger.info("Find recommend GPU for User ID [" + userId + "]");
         List<GpuResponse> graphicProcessors = new ArrayList<>();
-
         try {
-            logger.info("Find recommend GPU for User ID [" + userId + "]");
             Result result = Utility.returnReccomendedItem(null, "gpu", userId);
             graphicProcessors = doRecommender(result);
             logger.info("Recommend item received");
@@ -135,15 +137,19 @@ public class GpuServiceImpl implements GpuService {
 
     @Override
     public ResponseEntity<Object> getRecommendItemForUserWithItemId(String id, Integer userId) {
+        logger.info("Find recommend CPU with [" + id + "] for User ID [" + userId + "]");
         GraphicProcessor gpu = gpuRepository.findByID(id);
-        List<GpuResponse> graphicProcessors = new ArrayList<>();
         if(gpu == null) {
             logger.info("GPU by ID [" + id + "] not found");
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
+        logger.info("GPU by ID [" + id + "] found");
 
+        List<GpuResponse> graphicProcessors = new ArrayList<>();
         try {
+            logger.info("Start get recommend item");
             Result result = Utility.returnReccomendedItem(gpu.getId(), "gpu", userId);
+            logger.info("Recommend item received");
             graphicProcessors = doRecommender(result);
         } catch (Exception e) {
             logger.error("Exception: " + e.getMessage(), e);
@@ -156,9 +162,9 @@ public class GpuServiceImpl implements GpuService {
 
     public List<GpuResponse> doRecommender(Result result) {
         List<GpuResponse> recommendList = new ArrayList<>();
-        for (int i = 0; i <10; ++i) {
+        for (int i = 0; i < recNo; ++i) {
             Recommender recommender = result.getResult().get(i);
-            logger.info(recommender.getItem() + " " + recommender.getScore());
+            logger.info(recommender.getItem() + " score: " + recommender.getScore());
             recommendList.add(new GpuResponse(gpuRepository.findByID(recommender.getItem())));
         }
         return recommendList;

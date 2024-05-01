@@ -12,13 +12,13 @@ import backend.user.User;
 import backend.user.UserActivity;
 import backend.user.UserActivityRepository;
 import backend.user.UserRepository;
-import backend.utility.ClientLevel;
 import backend.utility.Recommender;
 import backend.utility.Result;
 import backend.utility.Utility;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
@@ -52,6 +52,9 @@ public class MainboardServiceImpl implements MainboardService {
 
     @Autowired
     private MainRatingRepository mainRatingRepository;
+
+    @Value("${pcrs.recommend.item.no}")
+    private Integer recNo;
 
     @Override
     public ResponseEntity<Object> findByProperties(String name, String chipset, String socket, String manufacturer, String sizeOfRam,
@@ -110,43 +113,55 @@ public class MainboardServiceImpl implements MainboardService {
             User user = userRepository.findByID(userId);
 
             if (user != null) {
+                logger.info("Add user [" + user.getId() + "] activities");
                 userActivityRepository.save(new UserActivity(user, "view", mainboard.getId()));
                 Utility.sendActivity(Utility.URL, "view", user.getId(), mainboard.getId());
                 mainboardRepository.update(id);
+                logger.info("Save success");
             }
             mainboard.setMainboardRating(mainRatingRepository.findById(user.getId() + "-" + id));
-            logger.info("Save success");
 
         } catch (Exception e) {
             logger.error("Exception: " + e.getMessage(), e);
         }
 
+        logger.info("Create DTO response");
         MainboardResponse response = new MainboardResponse(mainboard);
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
     @Override
     public ResponseEntity<Object> getRecommendItemForUser(Integer userId) {
+        logger.info("Find recommend mainboard for User ID [" + userId + "]");
         List<MainboardResponse> mainboards = new ArrayList<>();
 
         try {
             Result result = Utility.returnReccomendedItem(null, "mainboard", userId);
             mainboards = doRecommender(result);
+            logger.info("Recommend item received");
         } catch (Exception e) {
             logger.error("Exception: " + e.getMessage(), e);
         }
 
+        logger.info("Create DTO response");
         Page<MainboardResponse> mainboardPage = new PageImpl<>(mainboards);
         return new ResponseEntity<>(mainboardPage, HttpStatus.OK);
     }
 
     @Override
     public ResponseEntity<Object> getRecommendItemForUserWithItemId(String id, Integer userId) {
+        logger.info("Find recommend mainboard with [" + id + "] for User ID [" + userId + "]");
         Mainboard mainboard = mainboardRepository.findByID(id);
-        List<MainboardResponse> mainboards = new ArrayList<>();
+        if(mainboard == null) {
+            logger.info("GPU by ID [" + id + "] not found");
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
 
+        List<MainboardResponse> mainboards = new ArrayList<>();
         try {
+            logger.info("Start get recommend item");
             Result result = Utility.returnReccomendedItem(mainboard.getId(), "mainboard", userId);
+            logger.info("Recommend item received");
             mainboards = doRecommender(result);
         } catch (Exception e) {
             logger.error("Exception: " + e.getMessage(), e);
@@ -158,9 +173,9 @@ public class MainboardServiceImpl implements MainboardService {
 
     public List<MainboardResponse> doRecommender(Result result) {
         List<MainboardResponse> recommendList = new ArrayList<>();
-        for (int i = 0; i <10; ++i) {
+        for (int i = 0; i < recNo; ++i) {
             Recommender recommender = result.getResult().get(i);
-            System.out.println(recommender.getItem() + " " + recommender.getScore());
+            logger.info(recommender.getItem() + " score: " + recommender.getScore());
             recommendList.add(new MainboardResponse(mainboardRepository.findByID(recommender.getItem())));
         }
         return recommendList;

@@ -16,6 +16,7 @@ import backend.utility.Utility;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
@@ -47,6 +48,9 @@ public class CpuServiceImpl implements CpuService {
     @Autowired
     private CpuRepository cpuRepository;
 
+    @Value("${pcrs.recommend.item.no}")
+    private Integer recNo;
+
     @Override
     public ResponseEntity<Object> findByProperties(String name, String chipset, String manufacturer, String socket, Integer cores, Pageable pageable) {
         List<CpuResponse> responseList = new ArrayList<>();
@@ -72,7 +76,7 @@ public class CpuServiceImpl implements CpuService {
             cq.orderBy(cb.desc(root.get("fullname")), cb.asc(root.get("id")));
             return p;
         }, pageable);
-        logger.info("Finish find CPU with param");
+        logger.info("Finish find CPU with param, size [" + cpuPages.getTotalElements() + "]");
 
         logger.info("Create DTO response");
         for (CentralProcessor cpu : cpuPages) {
@@ -96,9 +100,11 @@ public class CpuServiceImpl implements CpuService {
         try {
             User user = userRepository.findByID(userId);
             if (user != null) {
+                logger.info("Add user [" + userId + "] activities");
                 userActivityRepository.save(new UserActivity(user, "view", cpu.getId()));
                 Utility.sendActivity(Utility.URL, "view", user.getId(), cpu.getId());
                 cpuRepository.update(id);
+                logger.info("Save success");
             }
             cpu.setCpuRating(cpuRatingRepository.findById(user.getId() + "-" + id));
         } catch (Exception e) {
@@ -112,12 +118,12 @@ public class CpuServiceImpl implements CpuService {
 
     @Override
     public ResponseEntity<Object> getRecommendItemForUser(Integer userId) {
+        logger.info("Find recommend CPU for User ID [" + userId + "]");
         List<CpuResponse> centralProcessors = new ArrayList<>();
         try {
-            logger.info("Find recommend CPU for User ID [" + userId + "]");
             Result result = Utility.returnReccomendedItem(null, "cpu", userId);
-            centralProcessors = doRecommender(result);
             logger.info("Recommend item received");
+            centralProcessors = doRecommender(result);
         } catch (Exception e) {
             logger.error("Exception: " + e.getMessage(), e);
         }
@@ -155,7 +161,7 @@ public class CpuServiceImpl implements CpuService {
 
     private List<CpuResponse> doRecommender(Result result) {
         List<CpuResponse> recommendList = new ArrayList<>();
-        for (int i = 0; i <10; ++i) {
+        for (int i = 0; i < recNo ; ++i) {
             Recommender recommender = result.getResult().get(i);
             logger.info(recommender.getItem() + " score: " + recommender.getScore());
             recommendList.add(new CpuResponse(cpuRepository.findByID(recommender.getItem())));
