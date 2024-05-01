@@ -109,8 +109,8 @@ public class PsuServiceImpl implements PsuService {
                 Utility.sendActivity(Utility.URL, "view", user.getId(), psu.getId());
                 psuRepository.update(id);
                 logger.info("Save success");
+                psu.setPsuRating(psuRatingRepository.findById(user.getId() + "-" + id));
             }
-            psu.setPsuRating(psuRatingRepository.findById(user.getId() + "-" + id));
         } catch (Exception e) {
             logger.error("Exception: " + e.getMessage(), e);
         }

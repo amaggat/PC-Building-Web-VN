@@ -109,8 +109,8 @@ public class RamServiceImpl implements RamService {
                 Utility.sendActivity(Utility.URL, "view", user.getId(), ram.getId());
                 ramRepository.update(id);
                 logger.info("Save success");
+                ram.setRamRating(ramRatingRepository.findById(user.getId() + "-" + id));
             }
-            ram.setRamRating(ramRatingRepository.findById(user.getId() + "-" + id));
 
         } catch (Exception e) {
             logger.error("Exception: " + e.getMessage(), e);

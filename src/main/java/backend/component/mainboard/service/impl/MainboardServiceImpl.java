@@ -118,8 +118,8 @@ public class MainboardServiceImpl implements MainboardService {
                 Utility.sendActivity(Utility.URL, "view", user.getId(), mainboard.getId());
                 mainboardRepository.update(id);
                 logger.info("Save success");
+                mainboard.setMainboardRating(mainRatingRepository.findById(user.getId() + "-" + id));
             }
-            mainboard.setMainboardRating(mainRatingRepository.findById(user.getId() + "-" + id));
 
         } catch (Exception e) {
             logger.error("Exception: " + e.getMessage(), e);

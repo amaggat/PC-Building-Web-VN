@@ -103,8 +103,8 @@ public class SsdServiceImpl implements SsdService {
                 Utility.sendActivity(Utility.URL, "view", user.getId(), ssd.getId());
                 ssdRepository.update(id);
                 logger.info("Save success");
+                ssd.setSsdRating(ssdRatingRepository.findById(user.getId() + "-" + id));
             }
-            ssd.setSsdRating(ssdRatingRepository.findById(user.getId() + "-" + id));
 
         } catch (Exception e) {
             logger.error("Exception: " + e.getMessage(), e);

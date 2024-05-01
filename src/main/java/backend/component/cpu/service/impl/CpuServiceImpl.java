@@ -105,8 +105,8 @@ public class CpuServiceImpl implements CpuService {
                 Utility.sendActivity(Utility.URL, "view", user.getId(), cpu.getId());
                 cpuRepository.update(id);
                 logger.info("Save success");
+                cpu.setCpuRating(cpuRatingRepository.findById(user.getId() + "-" + id));
             }
-            cpu.setCpuRating(cpuRatingRepository.findById(user.getId() + "-" + id));
         } catch (Exception e) {
             logger.error("Exception: " + e.getMessage(), e);
         }

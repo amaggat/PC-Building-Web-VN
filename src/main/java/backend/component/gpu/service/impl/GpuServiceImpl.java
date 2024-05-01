@@ -106,8 +106,8 @@ public class GpuServiceImpl implements GpuService {
                 Utility.sendActivity(Utility.URL, "view", user.getId(), gpu.getId());
                 gpuRepository.update(id);
                 logger.info("Save success");
+                gpu.setGpuRating(gpuRatingRepository.findById(user.getId() + "-" + id));
             }
-            gpu.setGpuRating(gpuRatingRepository.findById(user.getId() + "-" + id));
 
         } catch (Exception e) {
             logger.error("Exception: " + e.getMessage(), e);

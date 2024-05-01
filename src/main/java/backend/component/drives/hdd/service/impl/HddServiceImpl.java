@@ -102,8 +102,8 @@ public class HddServiceImpl implements HddService {
                 Utility.sendActivity(Utility.URL, "view", user.getId(), hdd.getId());
                 hddRepository.update(id);
                 logger.info("Save success");
+                hdd.setHddRating(hddRatingRepository.findById(user.getId() + "-" + id));
             }
-            hdd.setHddRating(hddRatingRepository.findById(user.getId() + "-" + id));
 
         } catch (Exception e) {
             logger.error("Exception: " + e.getMessage(), e);
