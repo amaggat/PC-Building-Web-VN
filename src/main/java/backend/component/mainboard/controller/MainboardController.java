@@ -54,7 +54,7 @@ public class MainboardController {
                     ", manufacturer:" + manufacturer + ", size_of_ram:" + sizeOfRam
                     + ", memorySlot:" + memorySlot+ ", formFactor:" + formFactor + "}");
             ResponseEntity<Object> response = mainboardService.findByProperties(name, chipset, socket, manufacturer, sizeOfRam, memorySlot, formFactor, pageable);
-            return new ResponseEntity<>(response, HttpStatus.OK);
+            return response;
         } catch (Exception e) {
             logger.error("Exception: " + e.getMessage(), e);
             return new ResponseEntity<>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
@@ -70,7 +70,7 @@ public class MainboardController {
         try {
             logger.info("Request Data: {user_id:" + userId + ", item_id:" + id + "}");
             ResponseEntity<Object> response = mainboardService.findById(id, userId);
-            return new ResponseEntity<>(response, HttpStatus.OK);
+            return response;
         } catch (Exception e) {
             logger.error("Exception: " + e.getMessage(), e);
             return new ResponseEntity<>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
@@ -87,7 +87,7 @@ public class MainboardController {
         try {
             logger.info("Request Data: {userID:" + userId + "}");
             ResponseEntity<Object> response = mainboardService.getRecommendItemForUser(userId);
-            return new ResponseEntity<>(response, HttpStatus.OK);
+            return response;
         } catch (Exception e) {
             logger.error("Exception: " + e.getMessage(), e);
             return new ResponseEntity<>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
@@ -103,7 +103,7 @@ public class MainboardController {
         try {
             logger.info("Request Data: {user_id:" + userId + ", item_id:" + id + "}");
             ResponseEntity<Object> response = mainboardService.getRecommendItemForUserWithItemId(id, userId);
-            return new ResponseEntity<>(response, HttpStatus.OK);
+            return response;
         } catch (Exception e) {
             logger.error("Exception: " + e.getMessage(), e);
             return new ResponseEntity<>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);

@@ -49,7 +49,7 @@ public class HddController {
         try {
             logger.info("Request Data: {userID:" + userId + ", cpu_id:" + id + "}");
             ResponseEntity<Object> response = hddService.findById(id, userId);
-            return new ResponseEntity<>(response, HttpStatus.OK);
+            return response;
         } catch (Exception e) {
             logger.error("Exception: " + e.getMessage(), e);
             return new ResponseEntity<>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
@@ -66,7 +66,7 @@ public class HddController {
         try {
             logger.info("Request Data: {userID:" + userId + "}");
             ResponseEntity<Object> response = hddService.getRecommendItemForUser(userId);
-            return new ResponseEntity<>(response, HttpStatus.OK);
+            return response;
         } catch (Exception e) {
             logger.error("Exception: " + e.getMessage(), e);
             return new ResponseEntity<>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
@@ -82,7 +82,7 @@ public class HddController {
         try {
             logger.info("Request Data: {user_id:" + userId + ", item_id:" + id + "}");
             ResponseEntity<Object> response = hddService.getRecommendItemForUserWithItemId(id, userId);
-            return new ResponseEntity<>(response, HttpStatus.OK);
+            return response;
         } catch (Exception e) {
             logger.error("Exception: " + e.getMessage(), e);
             return new ResponseEntity<>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);

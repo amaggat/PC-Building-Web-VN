@@ -55,7 +55,7 @@ public class PsuController {
             logger.info("Request Data: {name:" + name + ", chipset:" + chipset +
                     ", manufacturer:" + manufacturer + ", standard_80:" + standard_80+ ", power:" + power + "}");
             ResponseEntity<Object> response = psuService.findByProperties(name, chipset, manufacturer, standard_80, power, pageable);
-            return new ResponseEntity<>(response, HttpStatus.OK);
+            return response;
         } catch (Exception e) {
             logger.error("Exception: " + e.getMessage(), e);
             return new ResponseEntity<>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
@@ -71,7 +71,7 @@ public class PsuController {
         try {
             logger.info("Request Data: {user_id:" + userId + ", item_id:" + id + "}");
             ResponseEntity<Object> response = psuService.findById(id, userId);
-            return new ResponseEntity<>(response, HttpStatus.OK);
+            return response;
         } catch (Exception e) {
             logger.error("Exception: " + e.getMessage(), e);
             return new ResponseEntity<>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
@@ -88,7 +88,7 @@ public class PsuController {
         try {
             logger.info("Request Data: {userID:" + userId + "}");
             ResponseEntity<Object> response = psuService.getRecommendItemForUser(userId);
-            return new ResponseEntity<>(response, HttpStatus.OK);
+            return response;
         } catch (Exception e) {
             logger.error("Exception: " + e.getMessage(), e);
             return new ResponseEntity<>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
@@ -104,7 +104,7 @@ public class PsuController {
         try {
             logger.info("Request Data: {user_id:" + userId + ", item_id:" + id + "}");
             ResponseEntity<Object> response = psuService.getRecommendItemForUserWithItemId(id, userId);
-            return new ResponseEntity<>(response, HttpStatus.OK);
+            return response;
         } catch (Exception e) {
             logger.error("Exception: " + e.getMessage(), e);
             return new ResponseEntity<>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
