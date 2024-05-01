@@ -1,5 +1,6 @@
-package backend.component.drives.HardDiskDrive;
+package backend.component.gpu.repo;
 
+import backend.component.gpu.entity.GraphicProcessor;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.jpa.repository.Modifying;
@@ -7,15 +8,14 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.transaction.annotation.Transactional;
 
-public interface HddRepository extends JpaRepository<HardDiskDrive, Integer>, JpaSpecificationExecutor<HardDiskDrive> {
+public interface GpuRepository extends JpaRepository<GraphicProcessor, Integer>, JpaSpecificationExecutor<GraphicProcessor> {
 
-    @Query("SELECT DISTINCT hdd FROM HardDiskDrive hdd WHERE hdd.id= :id")
+    @Query("SELECT DISTINCT gpu FROM GraphicProcessor gpu WHERE gpu.id =:id")
     @Transactional(readOnly = true)
-    HardDiskDrive findByID(@Param("id") String id);
+    GraphicProcessor findByID(@Param("id") String id);
 
     @Modifying
     @Transactional
-    @Query("UPDATE HardDiskDrive hdd SET hdd.view = hdd.view + 1 WHERE hdd.id = :id")
+    @Query("UPDATE GraphicProcessor gpu SET gpu.view = gpu.view + 1 WHERE gpu.id = :id")
     void update(@Param("id") String id);
-
 }

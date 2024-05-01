@@ -1,5 +1,7 @@
-package backend.component.gpu;
+package backend.component.gpu.controller;
 
+import backend.component.gpu.repo.GpuRepository;
+import backend.component.gpu.entity.GraphicProcessor;
 import backend.recommendation.repository.GpuRatingRepository;
 import backend.security.utils.JwtUtils;
 import backend.user.User;

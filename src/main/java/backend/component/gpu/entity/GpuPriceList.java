@@ -1,4 +1,4 @@
-package backend.component.gpu;
+package backend.component.gpu.entity;
 
 
 import backend.retailer.Retailer;

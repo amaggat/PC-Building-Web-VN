@@ -2,9 +2,9 @@ package backend.retailer;
 
 import backend.common.NameEntity;
 import backend.component.cpu.entity.CpuPriceList;
-import backend.component.drives.HardDiskDrive.HddPriceList;
-import backend.component.drives.SolidStateDrive.SsdPriceList;
-import backend.component.gpu.GpuPriceList;
+import backend.component.drives.hdd.HddPriceList;
+import backend.component.drives.sdd.SsdPriceList;
+import backend.component.gpu.entity.GpuPriceList;
 import backend.component.mainboard.MainPriceList;
 import backend.component.psu.PsuPriceList;
 import backend.component.ram.RamPriceList;

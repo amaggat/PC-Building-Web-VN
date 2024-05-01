@@ -1,4 +1,4 @@
-package backend.component.drives.SolidStateDrive;
+package backend.component.drives.sdd;
 
 
 import backend.retailer.Retailer;

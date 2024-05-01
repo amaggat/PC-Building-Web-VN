@@ -1,4 +1,4 @@
-package backend.component.drives.HardDiskDrive;
+package backend.component.drives.hdd;
 
 import backend.component.model.ElectronicComponents;
 import backend.pcprofile.PcProfile;

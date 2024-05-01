@@ -1,15 +1,14 @@
 package backend.pcprofile;
 
 import backend.component.cpu.entity.CentralProcessor;
-import backend.component.drives.HardDiskDrive.HardDiskDrive;
-import backend.component.drives.SolidStateDrive.SolidStateDrive;
-import backend.component.gpu.GraphicProcessor;
+import backend.component.drives.hdd.HardDiskDrive;
+import backend.component.drives.sdd.SolidStateDrive;
+import backend.component.gpu.entity.GraphicProcessor;
 import backend.component.mainboard.Mainboard;
 import backend.component.psu.PowerSupplyUnit;
 import backend.component.ram.Ram;
 import backend.recommendation.score.Category;
 import backend.user.User;
-import javafx.util.Pair;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
