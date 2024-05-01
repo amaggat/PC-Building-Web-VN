@@ -49,6 +49,7 @@ public class CpuServiceImpl implements CpuService {
     public Object findByProperties(String name, String chipset, String manufacturer, String socket, Integer cores, Pageable pageable) {
         List<CpuResponse> responseList = new ArrayList<>();
 
+        logger.info("Start find CPU with param");
         Page<CentralProcessor> cpuPages = cpuRepository.findAll((Specification<CentralProcessor>) (root, cq, cb) -> {
             Predicate p = cb.conjunction();
             if (Objects.nonNull(chipset)) {
@@ -69,7 +70,9 @@ public class CpuServiceImpl implements CpuService {
             cq.orderBy(cb.desc(root.get("fullname")), cb.asc(root.get("id")));
             return p;
         }, pageable);
+        logger.info("Finish find CPU with param");
 
+        logger.info("Create DTO response");
         for (CentralProcessor cpu : cpuPages) {
             responseList.add(new CpuResponse(cpu));
         }
@@ -79,23 +82,10 @@ public class CpuServiceImpl implements CpuService {
     }
 
     @Override
-    public Object getRecommendItemForUser(Integer userId) {
-        List<CentralProcessor> centralProcessors = new ArrayList<>();
-        try {
-            Result result = Utility.returnReccomendedItem(null, "cpu", userId);
-            centralProcessors = doRecommender(result);
-            Page<CentralProcessor> cpuPage = new PageImpl<>(centralProcessors);
-            return cpuPage;
-        } catch (Exception e) {
-            Page<CentralProcessor> cpuPage = new PageImpl<>(centralProcessors);
-            return cpuPage;
-        }
-    }
-
-    @Override
     public Object findById(String id, Integer userId) {
+        logger.info("Start find CPU by ID [" + id + "]");
         CentralProcessor cpu = cpuRepository.findByID(id);
-        CpuResponse response = new CpuResponse(cpu);
+        logger.info("CPU by ID [" + id + "] found");
         try {
             User user = userRepository.findByID(userId);
             if (user != null) {
@@ -104,37 +94,52 @@ public class CpuServiceImpl implements CpuService {
                 cpuRepository.update(id);
             }
             cpu.setCpuRating(cpuRatingRepository.findById(user.getId() + "-" + id));
-
-            logger.log(ClientLevel.CLIENT, "Success");
-            return response;
         } catch (Exception e) {
-            logger.log(ClientLevel.CLIENT, "Unsuccess");
-            return response;
+            logger.error("Exception: " + e.getMessage(), e);
+        }
+        logger.info("Create DTO response");
+        CpuResponse response = new CpuResponse(cpu);
+        return response;
+    }
+
+    @Override
+    public Object getRecommendItemForUser(Integer userId) {
+        List<CpuResponse> centralProcessors = new ArrayList<>();
+        try {
+            Result result = Utility.returnReccomendedItem(null, "cpu", userId);
+            centralProcessors = doRecommender(result);
+            Page<CpuResponse> cpuPage = new PageImpl<>(centralProcessors);
+            return cpuPage;
+        } catch (Exception e) {
+            logger.error("Exception: " + e.getMessage(), e);
+            Page<CpuResponse> cpuPage = new PageImpl<>(centralProcessors);
+            return cpuPage;
         }
     }
 
     @Override
     public Object getRecommendItemForUserWithItemId(String id, Integer userId) {
         CentralProcessor cpu = cpuRepository.findByID(id);
-        List<CentralProcessor> centralProcessors = new ArrayList<>();
+        List<CpuResponse> centralProcessors = new ArrayList<>();
         System.out.println("User: " + userId);
         try {
             Result result = Utility.returnReccomendedItem(cpu.getId(), "cpu", userId);
             centralProcessors = doRecommender(result);
-            Page<CentralProcessor> cpuPage = new PageImpl<>(centralProcessors);
+            Page<CpuResponse> cpuPage = new PageImpl<>(centralProcessors);
             return cpuPage;
         } catch (Exception e) {
-            Page<CentralProcessor> cpuPage = new PageImpl<>(centralProcessors);
+            logger.error("Exception: " + e.getMessage(), e);
+            Page<CpuResponse> cpuPage = new PageImpl<>(centralProcessors);
             return cpuPage;
         }
     }
 
-    private List<CentralProcessor> doRecommender(Result result) {
-        List<CentralProcessor> recommendList = new ArrayList<>();
+    private List<CpuResponse> doRecommender(Result result) {
+        List<CpuResponse> recommendList = new ArrayList<>();
         for (int i = 0; i <10; ++i) {
             Recommender recommender = result.getResult().get(i);
             System.out.println(recommender.getItem() + " " + recommender.getScore());
-            recommendList.add(cpuRepository.findByID(recommender.getItem()));
+            recommendList.add(new CpuResponse(cpuRepository.findByID(recommender.getItem())));
         }
         return recommendList;
     }

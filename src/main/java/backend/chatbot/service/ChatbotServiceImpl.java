@@ -5,7 +5,7 @@ import backend.component.drives.hdd.HddRepository;
 import backend.component.drives.sdd.SsdRepository;
 import backend.component.gpu.repo.GpuRepository;
 import backend.component.mainboard.repo.MainboardRepository;
-import backend.component.psu.PsuRepository;
+import backend.component.psu.repo.PsuRepository;
 import backend.component.ram.RamRepository;
 import backend.utility.Recommender;
 import backend.utility.Result;

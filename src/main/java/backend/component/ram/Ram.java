@@ -76,43 +76,8 @@ public class Ram extends ElectronicComponents {
         this.pcProfileList = pcProfileList;
     }
 
-//    public List<RamRating> getRamRatingList() {
-//        return ramRatingList;
-//    }
 
     public void setRamRatingList(List<RamRating> ramRatingList) {
         this.ramRatingList = ramRatingList;
-    }
-
-    @Override
-    public Double getAverageRating() {
-
-        if (ramRatingList.isEmpty()) {
-            return null;
-        } else {
-            double avg = 0.0;
-            for (RamRating obj : this.ramRatingList) {
-                avg += obj.getRating();
-            }
-            avg = avg / this.ramRatingList.size();
-            return Utility.to2DecimalDouble(avg);
-        }
-
-    }
-
-    @Override
-    public Integer getNumberOfRating() {
-        return this.ramRatingList.size();
-    }
-
-    public int getMinPrice(){
-        int min = 500000000;
-        for(RamPriceList ramPriceList : this.PriceList)
-        {
-            if(ramPriceList.getPrice() < min) {
-                min = ramPriceList.getPrice();
-            }
-        }
-        return min;
     }
 }

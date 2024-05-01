@@ -6,7 +6,7 @@ import backend.component.drives.hdd.HddPriceList;
 import backend.component.drives.sdd.SsdPriceList;
 import backend.component.gpu.entity.GpuComponentPrice;
 import backend.component.mainboard.entity.MainboardComponentPrice;
-import backend.component.psu.PsuPriceList;
+import backend.component.psu.entity.PsuComponentPrice;
 import backend.component.ram.RamPriceList;
 import backend.recommendation.rating.RetailerRating;
 import backend.utility.Utility;
@@ -56,7 +56,7 @@ public class Retailer extends NameEntity {
     private List<HddPriceList> hddList;
 
     @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, mappedBy = "retailer")
-    private List<PsuPriceList> psuList;
+    private List<PsuComponentPrice> psuList;
 
     @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, mappedBy = "retailer")
     private List<RamPriceList> ramList;

@@ -2,6 +2,7 @@ package backend.component.mainboard.service.impl;
 
 
 import backend.component.mainboard.controller.MainboardController;
+import backend.component.mainboard.dto.response.MainboardResponse;
 import backend.component.mainboard.entity.Mainboard;
 import backend.component.mainboard.repo.MainboardRepository;
 import backend.component.mainboard.service.MainboardService;
@@ -51,9 +52,10 @@ public class MainboardServiceImpl implements MainboardService {
     private MainRatingRepository mainRatingRepository;
 
     @Override
-    public Page<Mainboard> findByProperties(String name, String chipset, String socket, String manufacturer, String sizeOfRam,
+    public Object findByProperties(String name, String chipset, String socket, String manufacturer, String sizeOfRam,
                                             String memorySlot, String formFactor, Pageable pageable) {
-        Page<Mainboard> mainboard = mainboardRepository.findAll((Specification<Mainboard>) (root, criteriaQuery, criteriaBuilder) -> {
+        List<MainboardResponse> responseList = new ArrayList<>();
+        Page<Mainboard> mainboardPage = mainboardRepository.findAll((Specification<Mainboard>) (root, criteriaQuery, criteriaBuilder) -> {
             Predicate predicate = criteriaBuilder.conjunction();
             if (Objects.nonNull(chipset)) {
                 predicate = criteriaBuilder.and(predicate, criteriaBuilder.like(root.get("chipset"), "%" + chipset + "%"));
@@ -79,11 +81,17 @@ public class MainboardServiceImpl implements MainboardService {
             criteriaQuery.orderBy(criteriaBuilder.desc(root.get("fullname")), criteriaBuilder.asc(root.get("id")));
             return predicate;
         }, pageable);
-        return mainboard;
+
+        for (Mainboard mainboard : mainboardPage) {
+            responseList.add(new MainboardResponse(mainboard));
+        }
+
+        Page<MainboardResponse> mainboardResponsePage = new PageImpl<>(responseList, pageable, mainboardPage.getTotalElements());
+        return mainboardResponsePage;
     }
 
     @Override
-    public Mainboard findById(String id, Integer userId) {
+    public Object findById(String id, Integer userId) {
         Mainboard mainboard = mainboardRepository.findByID(id);
         try {
             User user = userRepository.findByID(userId);
@@ -94,17 +102,19 @@ public class MainboardServiceImpl implements MainboardService {
                 mainboardRepository.update(id);
             }
             mainboard.setMainboardRating(mainRatingRepository.findById(user.getId() + "-" + id));
-            logger.log(ClientLevel.CLIENT, "Success");
-            return mainboard;
+            logger.info("Save success");
+            MainboardResponse response = new MainboardResponse(mainboard);
+            return response;
 
         } catch (Exception e) {
-            logger.log(ClientLevel.CLIENT, "Unsuccess");
-            return mainboard;
+            logger.error("Exception: " + e.getMessage(), e);
+            MainboardResponse response = new MainboardResponse(mainboard);
+            return response;
         }
     }
 
     @Override
-    public Page<Mainboard> getRecommendItemForUser(Integer userId) {
+    public Object getRecommendItemForUser(Integer userId) {
         List<Mainboard> mainboards = new ArrayList<>();
 
         try {
@@ -113,13 +123,14 @@ public class MainboardServiceImpl implements MainboardService {
             Page<Mainboard> mainboardPage = new PageImpl<>(mainboards);
             return mainboardPage;
         } catch (Exception e) {
+            logger.error("Exception: " + e.getMessage(), e);
             Page<Mainboard> mainboardPage = new PageImpl<>(mainboards);
             return mainboardPage;
         }
     }
 
     @Override
-    public Page<Mainboard> getRecommendItemForUserWithItemId(String id, Integer userId) {
+    public Object getRecommendItemForUserWithItemId(String id, Integer userId) {
         Mainboard mainboard = mainboardRepository.findByID(id);
         List<Mainboard> mainboards = new ArrayList<>();
 
@@ -129,6 +140,7 @@ public class MainboardServiceImpl implements MainboardService {
             Page<Mainboard> mainboardPage = new PageImpl<>(mainboards);
             return mainboardPage;
         } catch (Exception e) {
+            logger.error("Exception: " + e.getMessage(), e);
             Page<Mainboard> mainboardPage = new PageImpl<>(mainboards);
             return mainboardPage;
         }

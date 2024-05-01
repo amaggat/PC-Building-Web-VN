@@ -77,7 +77,7 @@ public class RatingController {
     @PostMapping("/user/rating/mainboard")
     public ResponseEntity<?> rating(@RequestBody MainboardRating mainboardRating, @CookieValue(value = "userId") Integer userid) {
         mainRatingRepository.save(mainboardRating);
-        updateLog(userid, mainboardRating.getMainboard(), mainboardRating.getRating());
+        updateLog(userid, mainboardRating.getMainboard().getId(), mainboardRating.getRating());
         return ResponseEntity.ok(new AuthenticationResponse("Rated", userid.toString()));
     }
 

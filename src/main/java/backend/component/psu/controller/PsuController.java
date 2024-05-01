@@ -1,6 +1,8 @@
-package backend.component.psu;
+package backend.component.psu.controller;
 
 
+import backend.component.psu.entity.PowerSupplyUnit;
+import backend.component.psu.repo.PsuRepository;
 import backend.recommendation.repository.PsuRatingRepository;
 import backend.security.utils.JwtUtils;
 import backend.user.User;

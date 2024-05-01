@@ -1,6 +1,7 @@
-package backend.component.psu;
+package backend.component.psu.repo;
 
 
+import backend.component.psu.entity.PowerSupplyUnit;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.jpa.repository.Modifying;

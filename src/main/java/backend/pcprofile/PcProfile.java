@@ -5,7 +5,7 @@ import backend.component.drives.hdd.HardDiskDrive;
 import backend.component.drives.sdd.SolidStateDrive;
 import backend.component.gpu.entity.GraphicProcessor;
 import backend.component.mainboard.entity.Mainboard;
-import backend.component.psu.PowerSupplyUnit;
+import backend.component.psu.entity.PowerSupplyUnit;
 import backend.component.ram.Ram;
 import backend.recommendation.score.Category;
 import backend.user.User;
