@@ -1,4 +1,4 @@
-package backend.component.ram;
+package backend.component.ram.entity;
 
 
 import backend.component.common.model.ComponentPrice;

@@ -1,7 +1,10 @@
 package backend.recommendation.rating;
 
-import backend.component.ram.Ram;
+import backend.component.ram.entity.Ram;
 import backend.recommendation.score.Rating;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import javax.persistence.Entity;
 import javax.persistence.JoinColumn;
@@ -10,17 +13,12 @@ import javax.persistence.Table;
 
 @Entity
 @Table(name = "ram_rating")
+@Data
+@AllArgsConstructor
+@NoArgsConstructor
 public class RamRating extends Rating {
 
     @ManyToOne
     @JoinColumn(name = "ramid")
     private Ram ram;
-
-    public String getRam() {
-        return ram.getId();
-    }
-
-    public void setRam(Ram ram) {
-        this.ram = ram;
-    }
 }

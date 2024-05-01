@@ -6,7 +6,7 @@ import backend.component.drives.sdd.entity.SolidStateDrive;
 import backend.component.gpu.entity.GraphicProcessor;
 import backend.component.mainboard.entity.Mainboard;
 import backend.component.psu.entity.PowerSupplyUnit;
-import backend.component.ram.Ram;
+import backend.component.ram.entity.Ram;
 import backend.recommendation.score.Category;
 import backend.user.User;
 import lombok.AllArgsConstructor;

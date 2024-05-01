@@ -1,15 +1,15 @@
-package backend.component.cpu.service.impl;
+package backend.component.ram.service.impl;
 
-import backend.component.cpu.dto.response.CpuResponse;
-import backend.component.cpu.entity.CentralProcessor;
-import backend.component.cpu.repo.CpuRepository;
-import backend.component.cpu.service.CpuService;
-import backend.recommendation.repository.CpuRatingRepository;
+import backend.component.ram.dto.response.RamResponse;
+import backend.component.ram.entity.Ram;
+import backend.component.ram.repo.RamRepository;
+import backend.component.ram.service.RamService;
+import backend.recommendation.repository.RamRatingRepository;
+import backend.security.utils.JwtUtils;
 import backend.user.User;
 import backend.user.UserActivity;
 import backend.user.UserActivityRepository;
 import backend.user.UserRepository;
-import backend.utility.ClientLevel;
 import backend.utility.Recommender;
 import backend.utility.Result;
 import backend.utility.Utility;
@@ -32,9 +32,13 @@ import java.util.List;
 import java.util.Objects;
 
 @Service
-public class CpuServiceImpl implements CpuService {
+public class RamServiceImpl implements RamService {
 
-    private static final Logger logger = LogManager.getLogger(CpuServiceImpl.class);
+
+    private static final Logger logger = LogManager.getLogger(RamServiceImpl.class);
+
+    @Autowired
+    private JwtUtils jwtUtil;
 
     @Autowired
     private UserActivityRepository userActivityRepository;
@@ -43,20 +47,20 @@ public class CpuServiceImpl implements CpuService {
     private UserRepository userRepository;
 
     @Autowired
-    private CpuRatingRepository cpuRatingRepository;
+    private RamRepository ramRepository;
 
     @Autowired
-    private CpuRepository cpuRepository;
+    private RamRatingRepository ramRatingRepository;
 
     @Value("${pcrs.recommend.item.no}")
     private Integer recNo;
 
     @Override
-    public ResponseEntity<Object> findByProperties(String name, String chipset, String manufacturer, String socket, Integer cores, Pageable pageable) {
-        List<CpuResponse> responseList = new ArrayList<>();
+    public ResponseEntity<Object> findByProperties(String name, String chipset, String manufacturer, String sizeOfRam, Integer clockSpeed, Pageable pageable) {
+        List<RamResponse> responseList = new ArrayList<>();
 
-        logger.info("Start find CPU with param");
-        Page<CentralProcessor> cpuPages = cpuRepository.findAll((Specification<CentralProcessor>) (root, cq, cb) -> {
+        logger.info("Start find RAM with param");
+        Page<Ram> ramPage = ramRepository.findAll((Specification<Ram>) (root, cq, cb) -> {
             Predicate p = cb.conjunction();
             if (Objects.nonNull(chipset)) {
                 p = cb.and(p, cb.like(root.get("chipset"), "%" + chipset + "%"));
@@ -64,11 +68,11 @@ public class CpuServiceImpl implements CpuService {
             if (Objects.nonNull(manufacturer)) {
                 p = cb.and(p, cb.like(root.get("manufacturer"), "%" + manufacturer + "%"));
             }
-            if (Objects.nonNull(socket)) {
-                p = cb.and(p, cb.like(root.get("socket"), "%" + socket + "%"));
+            if (Objects.nonNull(sizeOfRam)) {
+                p = cb.and(p, cb.like(root.get("sizeOfRam"), "%" + sizeOfRam + "%"));
             }
-            if (Objects.nonNull(cores)) {
-                p = cb.and(p, cb.equal(root.get("cores"), cores));
+            if (Objects.nonNull(clockSpeed)) {
+                p = cb.and(p, cb.equal(root.get("clockSpeed"), clockSpeed));
             }
             if (!StringUtils.isEmpty(name)) {
                 p = cb.and(p, cb.like(root.get("fullname"), "%" + name + "%"));
@@ -76,95 +80,97 @@ public class CpuServiceImpl implements CpuService {
             cq.orderBy(cb.desc(root.get("fullname")), cb.asc(root.get("id")));
             return p;
         }, pageable);
-        logger.info("Finish find CPU with param, size [" + cpuPages.getTotalElements() + "]");
+        logger.info("Finish find RAM with param, size [" + ramPage.getTotalElements() + "]");
 
         logger.info("Create DTO response");
-        for (CentralProcessor cpu : cpuPages) {
-            responseList.add(new CpuResponse(cpu));
+        for (Ram ram : ramPage) {
+            responseList.add(new RamResponse(ram));
         }
 
-        Page<CpuResponse> responsePage = new PageImpl<>(responseList, pageable, cpuPages.getTotalElements());
+        Page<RamResponse> responsePage = new PageImpl<>(responseList, pageable, ramPage.getTotalElements());
         return new ResponseEntity<>(responsePage, HttpStatus.OK);
     }
 
     @Override
     public ResponseEntity<Object> findById(String id, Integer userId) {
-        logger.info("Start find CPU by ID [" + id + "]");
-        CentralProcessor cpu = cpuRepository.findByID(id);
-        if(cpu == null) {
-            logger.error("CPU by ID [" + id + "] not found");
+        logger.info("Start find RAM by ID [" + id + "]");
+        Ram ram = ramRepository.findByID(id);
+        if(ram == null) {
+            logger.error("RAM by ID [" + id + "] not found");
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
-        logger.info("CPU by ID [" + id + "] found");
+        logger.info("RAM by ID [" + id + "] found");
 
         try {
             User user = userRepository.findByID(userId);
             if (user != null) {
-                logger.info("Add user [" + userId + "] activities");
-                userActivityRepository.save(new UserActivity(user, "view", cpu.getId()));
-                Utility.sendActivity(Utility.URL, "view", user.getId(), cpu.getId());
-                cpuRepository.update(id);
+                logger.info("Add user [" + user.getId() + "] activities");
+                userActivityRepository.save(new UserActivity(user, "view", ram.getId()));
+                Utility.sendActivity(Utility.URL, "view", user.getId(), ram.getId());
+                ramRepository.update(id);
                 logger.info("Save success");
             }
-            cpu.setCpuRating(cpuRatingRepository.findById(user.getId() + "-" + id));
+            ram.setRamRating(ramRatingRepository.findById(user.getId() + "-" + id));
+
         } catch (Exception e) {
             logger.error("Exception: " + e.getMessage(), e);
         }
 
         logger.info("Create DTO response");
-        CpuResponse response = new CpuResponse(cpu);
+        RamResponse response = new RamResponse(ram);
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
     @Override
     public ResponseEntity<Object> getRecommendItemForUser(Integer userId) {
-        logger.info("Find recommend CPU for User ID [" + userId + "]");
-        List<CpuResponse> centralProcessors = new ArrayList<>();
+        logger.info("Find recommend RAM for User ID [" + userId + "]");
+        List<RamResponse> rams = new ArrayList<>();
+
         try {
-            Result result = Utility.returnReccomendedItem(null, "cpu", userId);
+            logger.info("Start get recommend item");
+            Result result = Utility.returnReccomendedItem(null, "ram", userId);
             logger.info("Recommend item received");
-            centralProcessors = doRecommender(result);
+            rams = doRecommender(result);
         } catch (Exception e) {
             logger.error("Exception: " + e.getMessage(), e);
         }
 
         logger.info("Create DTO response");
-        Page<CpuResponse> response = new PageImpl<>(centralProcessors);
-        return new ResponseEntity<>(response, HttpStatus.OK);
+        Page<RamResponse> ramPage = new PageImpl<>(rams);
+        return new ResponseEntity<>(ramPage, HttpStatus.OK);
     }
 
     @Override
     public ResponseEntity<Object> getRecommendItemForUserWithItemId(String id, Integer userId) {
-        logger.info("Find recommend CPU with [" + id + "] for User ID [" + userId + "]");
-
-        CentralProcessor cpu = cpuRepository.findByID(id);
-        if(cpu == null) {
-            logger.error("CPU by ID [" + id + "] not found");
+        logger.info("Find recommend RAM with [" + id + "] for User ID [" + userId + "]");
+        Ram ram = ramRepository.findByID(id);
+        if(ram == null) {
+            logger.error("RAM by ID [" + id + "] not found");
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
-        logger.info("CPU by ID [" + id + "] found");
+        logger.info("RAM by ID [" + id + "] found");
 
-        List<CpuResponse> centralProcessors = new ArrayList<>();
+        List<RamResponse> rams = new ArrayList<>();
         try {
             logger.info("Start get recommend item");
-            Result result = Utility.returnReccomendedItem(cpu.getId(), "cpu", userId);
+            Result result = Utility.returnReccomendedItem(ram.getId(), "ram", userId);
             logger.info("Recommend item received");
-            centralProcessors = doRecommender(result);
+            rams = doRecommender(result);
         } catch (Exception e) {
             logger.error("Exception: " + e.getMessage(), e);
         }
 
         logger.info("Create DTO response");
-        Page<CpuResponse> response = new PageImpl<>(centralProcessors);
-        return new ResponseEntity<>(response, HttpStatus.OK);
+        Page<RamResponse> ramPage = new PageImpl<>(rams);
+        return new ResponseEntity<>(ramPage, HttpStatus.OK);
     }
 
-    private List<CpuResponse> doRecommender(Result result) {
-        List<CpuResponse> recommendList = new ArrayList<>();
-        for (int i = 0; i < recNo ; ++i) {
+    public List<RamResponse> doRecommender(Result result) {
+        List<RamResponse> recommendList = new ArrayList<>();
+        for (int i = 0; i < recNo; ++i) {
             Recommender recommender = result.getResult().get(i);
             logger.info(recommender.getItem() + " score: " + recommender.getScore());
-            recommendList.add(new CpuResponse(cpuRepository.findByID(recommender.getItem())));
+            recommendList.add(new RamResponse(ramRepository.findByID(recommender.getItem())));
         }
         return recommendList;
     }

@@ -7,7 +7,7 @@ import backend.component.drives.sdd.entity.SsdComponentPrice;
 import backend.component.gpu.entity.GpuComponentPrice;
 import backend.component.mainboard.entity.MainboardComponentPrice;
 import backend.component.psu.entity.PsuComponentPrice;
-import backend.component.ram.RamComponentPrice;
+import backend.component.ram.entity.RamComponentPrice;
 import backend.recommendation.rating.RetailerRating;
 import backend.utility.Utility;
 

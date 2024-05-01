@@ -36,7 +36,7 @@ import java.util.Objects;
 @Service
 public class MainboardServiceImpl implements MainboardService {
 
-    private static final Logger logger = LogManager.getLogger(MainboardController.class);
+    private static final Logger logger = LogManager.getLogger(MainboardServiceImpl.class);
 
     @Autowired
     private JwtUtils jwtUtil;
@@ -104,7 +104,7 @@ public class MainboardServiceImpl implements MainboardService {
         logger.info("Start find Mainboard by ID [" + id + "]");
         Mainboard mainboard = mainboardRepository.findByID(id);
         if(mainboard == null) {
-            logger.info("Mainboard by ID [" + id + "] not found");
+            logger.error("Mainboard by ID [" + id + "] not found");
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
 
@@ -153,7 +153,7 @@ public class MainboardServiceImpl implements MainboardService {
         logger.info("Find recommend mainboard with [" + id + "] for User ID [" + userId + "]");
         Mainboard mainboard = mainboardRepository.findByID(id);
         if(mainboard == null) {
-            logger.info("GPU by ID [" + id + "] not found");
+            logger.error("GPU by ID [" + id + "] not found");
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
 
@@ -167,6 +167,7 @@ public class MainboardServiceImpl implements MainboardService {
             logger.error("Exception: " + e.getMessage(), e);
         }
 
+        logger.info("Create DTO response");
         Page<MainboardResponse> mainboardPage = new PageImpl<>(mainboards);
         return new ResponseEntity<>(mainboardPage, HttpStatus.OK);
     }

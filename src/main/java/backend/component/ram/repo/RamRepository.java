@@ -1,5 +1,6 @@
-package backend.component.ram;
+package backend.component.ram.repo;
 
+import backend.component.ram.entity.Ram;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.jpa.repository.Modifying;
