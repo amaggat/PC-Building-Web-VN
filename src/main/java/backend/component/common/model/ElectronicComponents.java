@@ -43,12 +43,6 @@ public class ElectronicComponents {
     @NotEmpty
     private Integer view;
 
-    @Transient
-    private Double averageRating;
-
-    @Transient
-    private Integer numberOfRating;
-
 //    public Double getAverageRating() {
 //        return averageRating;
 //    }

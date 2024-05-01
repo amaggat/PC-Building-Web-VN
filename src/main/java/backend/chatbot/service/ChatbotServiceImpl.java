@@ -4,7 +4,7 @@ import backend.component.cpu.repo.CpuRepository;
 import backend.component.drives.hdd.HddRepository;
 import backend.component.drives.sdd.SsdRepository;
 import backend.component.gpu.repo.GpuRepository;
-import backend.component.mainboard.MainRepository;
+import backend.component.mainboard.repo.MainboardRepository;
 import backend.component.psu.PsuRepository;
 import backend.component.ram.RamRepository;
 import backend.utility.Recommender;
@@ -22,17 +22,17 @@ public class ChatbotServiceImpl implements ChatbotService{
 
     private final CpuRepository cpuRepository;
     private final GpuRepository gpuRepository;
-    private final MainRepository mainRepository;
+    private final MainboardRepository mainboardRepository;
     private final RamRepository ramRepository;
     private final SsdRepository ssdRepository;
     private final HddRepository hddRepository;
     private final PsuRepository psuRepository;
 
 
-    public ChatbotServiceImpl(CpuRepository cpuRepository, GpuRepository gpuRepository, MainRepository mainRepository, RamRepository ramRepository, SsdRepository ssdRepository, HddRepository hddRepository, PsuRepository psuRepository) {
+    public ChatbotServiceImpl(CpuRepository cpuRepository, GpuRepository gpuRepository, MainboardRepository mainboardRepository, RamRepository ramRepository, SsdRepository ssdRepository, HddRepository hddRepository, PsuRepository psuRepository) {
         this.cpuRepository = cpuRepository;
         this.gpuRepository = gpuRepository;
-        this.mainRepository = mainRepository;
+        this.mainboardRepository = mainboardRepository;
         this.ramRepository = ramRepository;
         this.ssdRepository = ssdRepository;
         this.hddRepository = hddRepository;
@@ -74,7 +74,7 @@ public class ChatbotServiceImpl implements ChatbotService{
                 componentName = gpuRepository.findByID(recommender.getItem()).getFullname();
                 break;
             case "mainboard":
-                componentName = mainRepository.findByID(recommender.getItem()).getFullname();
+                componentName = mainboardRepository.findByID(recommender.getItem()).getFullname();
                 break;
             case "ram":
                 componentName = ramRepository.findByID(recommender.getItem()).getFullname();

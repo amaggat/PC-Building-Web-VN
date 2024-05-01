@@ -1,7 +1,10 @@
 package backend.recommendation.rating;
 
-import backend.component.mainboard.Mainboard;
+import backend.component.mainboard.entity.Mainboard;
 import backend.recommendation.score.Rating;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import javax.persistence.Entity;
 import javax.persistence.JoinColumn;
@@ -10,17 +13,13 @@ import javax.persistence.Table;
 
 @Entity
 @Table(name = "mainboard_rating")
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
 public class MainboardRating extends Rating {
 
     @ManyToOne
     @JoinColumn(name = "mainid")
     private Mainboard mainboard;
 
-    public String getMainboard() {
-        return mainboard.getId();
-    }
-
-    public void setMainboard(Mainboard mainboard) {
-        this.mainboard = mainboard;
-    }
 }
